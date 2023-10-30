@@ -42,7 +42,7 @@ http:
         certResolver: letsencrypt
 
     flower-secure-router:
-      rule: 'Host(`animemoe.us`)'
+      rule: 'Host(`flower.animemoe.us`)'
       entryPoints:
         - flower
       service: flower
