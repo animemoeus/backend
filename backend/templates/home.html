@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en" class="no-js">
   <head>
@@ -10,33 +12,32 @@
     <meta name="keywords"
           content="arter, tendean, arter tendean, animemoeus, software engineer, fullstack developer" />
     <meta name="author" content="Arter Tendean" />
-    <link rel="shortcut icon" href="favicon.ico" />
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}" />
     <link rel="stylesheet"
-          href="/static/breezy-cv/css/reset.css"
+          href="{% static 'breezy-cv/css/reset.css' %}"
           type="text/css" />
     <link rel="stylesheet"
-          href="/static/breezy-cv/css/bootstrap-grid.min.css"
+          href="{% static 'breezy-cv/css/bootstrap-grid.min.css' %}"
           type="text/css" />
     <link rel="stylesheet"
-          href="/static/breezy-cv/css/animations.css"
+          href="{% static 'breezy-cv/css/animations.css' %}"
           type="text/css" />
     <link rel="stylesheet"
-          href="/static/breezy-cv/css/perfect-scrollbar.css"
+          href="{% static 'breezy-cv/css/perfect-scrollbar.css' %}"
           type="text/css" />
     <link rel="stylesheet"
-          href="/static/breezy-cv/css/owl.carousel.css"
+          href="{% static 'breezy-cv/css/owl.carousel.css' %}"
           type="text/css" />
     <link rel="stylesheet"
-          href="/static/breezy-cv/css/magnific-popup.css"
+          href="{% static 'breezy-cv/css/magnific-popup.css' %}"
           type="text/css" />
     <link rel="stylesheet"
-          href="/static/breezy-cv/css/main.css"
+          href="{% static 'breezy-cv/css/main.css' %}"
           type="text/css" />
   </head>
   <body>
     <!-- Animated Background -->
-    <div class="lm-animated-bg"
-         style="background-image: url(/static/breezy-cv/img/main_bg.png)"></div>
+    <div class="lm-animated-bg"></div>
     <!-- /Animated Background -->
     <!-- Loading animation -->
     <div class="preloader">
@@ -113,9 +114,9 @@
         </header>
         <!-- Mobile Navigation -->
         <div class="menu-toggle">
-          <span></span>
-          <span></span>
-          <span></span>
+          <!-- <span></span> -->
+          <!-- <span></span> -->
+          <!-- <span></span> -->
         </div>
         <!-- End Mobile Navigation -->
         <!-- Arrows Nav -->
@@ -322,46 +323,82 @@
                 <div class="row">
                   <div class="col-xs-12 col-sm-7">
                     <div class="block-title">
-                      <h3>Education</h3>
-                    </div>
-                    <div class="timeline timeline-second-style clearfix">
-                      <div class="timeline-item clearfix">
-                        <div class="left-part">
-                          <h5 class="item-period">2022</h5>
-                          <span class="item-company">Klabat University</span>
-                        </div>
-                        <div class="divider"></div>
-                        <div class="right-part">
-                          <h4 class="item-title">Bachelor Degree Computer Science</h4>
-                          <p></p>
-                        </div>
-                      </div>
-                      <div class="timeline-item clearfix">
-                        <div class="left-part">
-                          <h5 class="item-period">2018</h5>
-                          <span class="item-company">Klabat University</span>
-                        </div>
-                        <div class="divider"></div>
-                        <div class="right-part">
-                          <h4 class="item-title">Freshmen</h4>
-                          <p></p>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="white-space-50"></div>
-                    <div class="block-title">
                       <h3>Experience</h3>
                     </div>
                     <div class="timeline timeline-second-style clearfix">
                       <div class="timeline-item clearfix">
                         <div class="left-part">
-                          <h5 class="item-period">2022 - Current</h5>
-                          <span class="item-company">ErudiFi</span>
+                          <h5 class="item-period">2022 - 2023</h5>
+                          <span class="item-company">ErudiFi (Danacita & Bukas)</span>
                         </div>
                         <div class="divider"></div>
                         <div class="right-part">
                           <h4 class="item-title">Full Stack Engineer</h4>
-                          <p></p>
+                          <ul>
+                            <li>
+                              Django & Django Rest Framework (DRF) for secure
+                              and scalable APIs, including country-specific
+                              cases.
+                            </li>
+                            <li>Webhook system for real-time data updates.</li>
+                            <li>
+                              Background task automation with Celery, addressing
+                              country-specific scheduling needs.
+                            </li>
+                            <li>
+                              Database query optimization for better performance
+                              in diverse data environments.
+                            </li>
+                            <li>
+                              CSV/XLSX ingest feature for smooth data handling,
+                              accommodating country-specific data formats.
+                            </li>
+                            <li>
+                              Data validation to ensure reliability, tailored to
+                              specific country regulations.
+                            </li>
+                            <li>Implementing a risk engine for the user.</li>
+                            <li>
+                              ReactJS & NextJS for engaging interfaces, designed
+                              with country-specific user preferences in mind.
+                            </li>
+                            <li>
+                              API integration to extend application
+                              capabilities, considering diverse data sources and
+                              endpoints.
+                            </li>
+                            <li>
+                              Converting Figma designs to code for pixel-perfect
+                              UI, adaptable to country-specific design elements.
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                      <div class="white-space-50"></div>
+                      <div class="block-title">
+                        <h3>Education</h3>
+                      </div>
+                      <div class="timeline timeline-second-style clearfix">
+                        <div class="timeline-item clearfix">
+                          <div class="left-part">
+                            <h5 class="item-period">2022</h5>
+                            <span class="item-company">Klabat University</span>
+                          </div>
+                          <div class="divider"></div>
+                          <div class="right-part">
+                            <h4 class="item-title">Bachelor Degree Computer Science</h4>
+                          </div>
+                        </div>
+                        <div class="timeline-item clearfix">
+                          <div class="left-part">
+                            <h5 class="item-period">2018</h5>
+                            <span class="item-company">Klabat University</span>
+                          </div>
+                          <div class="divider"></div>
+                          <div class="right-part">
+                            <h4 class="item-title">Freshmen</h4>
+                            <!-- <p></p> -->
+                          </div>
                         </div>
                       </div>
                     </div>

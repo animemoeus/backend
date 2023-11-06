@@ -2759,6 +2759,7 @@ blockquote {
   background-size: cover;
   background-repeat: no-repeat;
   z-index: -1;
+  background-image: url("/static/breezy-cv/img/main_bg.png");
 }
 
 .vcentered {
