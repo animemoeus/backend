@@ -70,6 +70,7 @@ DJANGO_APPS = [
     "django.contrib.admin",
     "django.forms",
     "import_export",
+    "django_hosts",
 ]
 THIRD_PARTY_APPS = [
     "crispy_forms",
@@ -87,6 +88,7 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "backend.users",
     # Your stuff: custom apps go here
+    "discord_storage",
     "waifu",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -133,6 +135,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#middleware
 MIDDLEWARE = [
+    "django_hosts.middleware.HostsRequestMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -144,7 +147,12 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
+    "django_hosts.middleware.HostsResponseMiddleware",
 ]
+
+# django-hosts
+ROOT_HOSTCONF = "config.hosts"
+DEFAULT_HOST = "www"
 
 # STATIC
 # ------------------------------------------------------------------------------
@@ -338,3 +346,6 @@ SPECTACULAR_SETTINGS = {
 }
 # Your stuff...
 # ------------------------------------------------------------------------------
+DISCORD_FILE_SIZE_LIMIT = env.int("DISCORD_FILE_SIZE_LIMIT", default=25)
+DISCORD_STORAGE_UPLOAD_FROM_URL_WEBHOOK = env.str("DISCORD_STORAGE_UPLOAD_FROM_URL_WEBHOOK", default="")
+DISCORD_STORAGE_UPLOAD_FROM_FILE_WEBHOOK = env.str("DISCORD_STORAGE_UPLOAD_FROM_FILE_WEBHOOK", default="")
