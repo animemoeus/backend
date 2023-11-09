@@ -16,6 +16,8 @@ urlpatterns = [
         views.UploadFromFileView.as_view(),
         name="upload-from-file-v1",
     ),
+    path("bypass-discord-cors/", views.BypassDiscordCORS.as_view(), name="bypass-discord-cors"),
+    path("chunked-file/", views.ChunkedFiles.as_view(), name="chunked-file"),
 ]
 
 app_name = "discord_storage"
