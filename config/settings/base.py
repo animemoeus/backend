@@ -88,7 +88,6 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "backend.users",
     # Your stuff: custom apps go here
-    "discord_storage",
     "waifu",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

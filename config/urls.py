@@ -17,7 +17,6 @@ urlpatterns = [
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
     path("waifu/", include("waifu.urls", namespace="waifu")),
-    path("discord-storage/", include("discord_storage.urls", namespace="discord_storage")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # API URLS
