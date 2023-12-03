@@ -88,6 +88,7 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "backend.users",
     # Your stuff: custom apps go here
+    "tiktok",
     "waifu",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -349,3 +350,7 @@ SPECTACULAR_SETTINGS = {
 DISCORD_FILE_SIZE_LIMIT = env.int("DISCORD_FILE_SIZE_LIMIT", default=25)
 DISCORD_STORAGE_UPLOAD_FROM_URL_WEBHOOK = env.str("DISCORD_STORAGE_UPLOAD_FROM_URL_WEBHOOK", default="")
 DISCORD_STORAGE_UPLOAD_FROM_FILE_WEBHOOK = env.str("DISCORD_STORAGE_UPLOAD_FROM_FILE_WEBHOOK", default="")
+
+# Tiktok
+TIKTOK_MONITOR_TELEGRAM_BOT_SECRET = env.str("TIKTOK_MONITOR_TELEGRAM_BOT_SECRET", default="")
+TIKTOK_MONITOR_TELEGRAM_PRIVATE_CHANNEL_ID = env.str("TIKTOK_MONITOR_TELEGRAM_PRIVATE_CHANNEL_ID", default="")
