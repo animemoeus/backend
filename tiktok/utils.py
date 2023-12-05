@@ -8,10 +8,7 @@ class TiktokVideoNoWatermark:
     """https://github.com/yi005/Tiktok-Video-No-Watermark"""
 
     def __init__(self, username: str) -> None:
-        url = f"https://www.tikwm.com/api/user/info?unique_id={username}"
-        response = requests.request("GET", url)
-
-        self.username = response.json().get("data").get("user").get("uniqueId")
+        self.username = username
 
     def __str__(self):
         return self.username
