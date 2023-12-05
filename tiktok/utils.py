@@ -19,8 +19,6 @@ class TiktokVideoNoWatermark:
         url = f"https://www.tikwm.com/api/user/posts?unique_id={self.username}&count=33"
 
         response = requests.request("GET", url)
-        print(response.status_code)
-        print(response.text)
         if response.status_code != 200:
             return
 
