@@ -24,3 +24,8 @@ django-cors-headers==4.3.1  # https://github.com/adamchainz/django-cors-headers
 drf-spectacular==0.26.5  # https://github.com/tfranzel/drf-spectacular
 django-import-export==3.3.3  # https://github.com/django-import-export/django-import-export
 django-hosts==6.0  # https://github.com/jazzband/django-hosts
+
+
+# arter tendean
+pixivpy3==3.7.4  # https://github.com/upbit/pixivpy
+pyscord-storage==2.0.3 # https://github.com/animemoeus/pyscord-storage
