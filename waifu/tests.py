@@ -3,6 +3,7 @@ from django.urls import reverse
 from rest_framework import status
 
 from .models import Image
+from .utils import PixivIllust
 
 
 class WaifuTestCase(TestCase):
@@ -48,3 +49,19 @@ class WaifuTestCase(TestCase):
         url = reverse("waifu:random")
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class TestPixivIllust(TestCase):
+    def setUp(self) -> None:
+        self.single_illust = PixivIllust("https://www.pixiv.net/en/artworks/112996839")
+        self.multiple_illust = PixivIllust('PixivIllust("https://www.pixiv.net/en/artworks/60795514')
+
+    def test_get_single_illust(self):
+        data = self.single_illust.illust_detail
+        self.assertEqual(type(data), dict)
+        self.assertEqual(len(data.get("images")), 1)
+
+    def test_get_multiple_illust(self):
+        data = self.multiple_illust.illust_detail
+        self.assertEqual(type(data), dict)
+        self.assertEqual(len(data.get("images")), 9)
