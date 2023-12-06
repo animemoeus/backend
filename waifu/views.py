@@ -1,68 +1,48 @@
 import random
 
-from rest_framework import status
-from rest_framework.decorators import api_view
-from rest_framework.pagination import PageNumberPagination
+from rest_framework.generics import GenericAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.response import Response
 
 from .models import Image
-from .serializers import RandomWaifuSerializer, WaifuDetailSerializer, WaifuListSerialzer
+from .pagination import WaifuListPagination
+from .serializers import WaifuDetailSerializer, WaifuListSerialzer
 
 
-@api_view(["GET"])
-def index(request):
-    if request.method == "GET":
-        # waifu count per page
-        count = request.query_params.get("count", 20)
+class WaifuListView(ListAPIView):
+    serializer_class = WaifuListSerialzer
+    pagination_class = WaifuListPagination
 
-        # check NSFW
-        nsfw = request.query_params.get("nsfw", False)
-        if nsfw and nsfw.lower() == "true":
-            nsfw = True
-        else:
-            nsfw = False
+    def get_queryset(self):
+        nsfw = self.request.query_params.get("nsfw")
+        queryset = (
+            Image.objects.all().order_by("-id")
+            if nsfw == "true"
+            else Image.objects.filter(is_nsfw=False).order_by("-id")
+        )
 
-        # NSFW filter
-        if nsfw:
-            waifu = Image.objects.all().order_by("-id")
-        else:
-            waifu = Image.objects.filter(
-                is_nsfw=False,
-            ).order_by("-id")
-
-        paginator = PageNumberPagination()
-        paginator.page_size = count  # waifu count per page
-        waifu = paginator.paginate_queryset(waifu, request)
-        serializer = WaifuListSerialzer(waifu, many=True)
-
-        return paginator.get_paginated_response(serializer.data)
+        return queryset
 
 
-@api_view(["GET"])
-def detail(request, image_id):
-    if request.method == "GET":
-        try:
-            waifu = Image.objects.get(
-                image_id=image_id,
-            )
-            serializer = WaifuDetailSerializer(waifu)
-            return Response(serializer.data)
-        except Image.DoesNotExist:
-            return Response({"detail": "Not found bitch."}, status=status.HTTP_404_NOT_FOUND)
+class WaifuDetailView(RetrieveAPIView):
+    queryset = Image.objects.all()
+    serializer_class = WaifuDetailSerializer
+    lookup_field = "image_id"
 
 
-@api_view(["GET"])
-def random_waifu(request):
-    # get random waifu from database
-    total_records = Image.objects.count()
+class RandomWaifuView(GenericAPIView):
+    serializer_class = WaifuDetailSerializer
 
-    if not total_records:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+    def get_queryset(self):
+        # get random waifu from database
+        total_records = Image.objects.count()
 
-    # Generate a random index within the range of total_records
-    random_index = random.randint(0, total_records - 1)
+        # Generate a random index within the range of total_records
+        random_index = random.randint(0, total_records - 1)
 
-    # Retrieve a single random record using the generated index
-    waifu = Image.objects.order_by("id")[random_index]
-    serializer = RandomWaifuSerializer(waifu)
-    return Response(serializer.data)
+        # Retrieve a single random record using the generated index
+        return Image.objects.order_by("id")[random_index]
+
+    def get(self, request):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset)
+        return Response(serializer.data)

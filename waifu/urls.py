@@ -1,11 +1,11 @@
 from django.urls import path
 
-from . import views
+from .views import RandomWaifuView, WaifuDetailView, WaifuListView
 
 urlpatterns = [
-    path("", views.index, name="index"),
-    path("random/", views.random_waifu, name="random"),
-    path("<str:image_id>/", views.detail, name="detail"),
+    path("", WaifuListView.as_view(), name="index"),
+    path("random/", RandomWaifuView.as_view(), name="random"),
+    path("<str:image_id>/", WaifuDetailView.as_view(), name="detail"),
 ]
 
 app_name = "waifu"
