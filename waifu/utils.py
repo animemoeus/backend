@@ -3,7 +3,7 @@ from typing import Any
 from django.conf import settings
 from pixivpy3 import AppPixivAPI
 
-from .tasks import save_pixiv_illust_to_model
+from .tasks import update_pixiv_image_url_and_save_to_db
 
 
 class PixivIllust:
@@ -44,7 +44,4 @@ class PixivIllust:
         return formated_result
 
     def save(self) -> None:
-        # Why using a background task instead running it directly?
-        # Coz we have to use pyscord_storage to convert the original image url from Pixiv
-        # since Pixiv doesn't support for embedded their images
-        save_pixiv_illust_to_model.delay(self.illust_detail)
+        update_pixiv_image_url_and_save_to_db.delay(self.illust_detail)
