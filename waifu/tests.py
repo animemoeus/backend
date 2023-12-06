@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from rest_framework import status
 
@@ -56,6 +56,15 @@ class TestPixivIllust(TestCase):
         self.single_illust = PixivIllust("https://www.pixiv.net/en/artworks/112996839")
         self.multiple_illust = PixivIllust('PixivIllust("https://www.pixiv.net/en/artworks/60795514')
 
+        self.dummy_illust_data = {
+            "creator_name": "depoo",
+            "creator_username": "depoo",
+            "title": "ハロウィン～高木さん＆（元）高木さん～",
+            "images": ["https://i.pximg.net/img-original/img/2023/10/31/06/19/43/112996839_p0.png"],
+            "source": "https://www.pixiv.net/en/artworks/112996839",
+        }
+        self.dummy_pixiv_image_url = "https://i.pximg.net/img-original/img/2023/10/31/06/19/43/112996839_p0.png"
+
     def test_get_single_illust(self):
         data = self.single_illust.illust_detail
         self.assertEqual(type(data), dict)
@@ -65,3 +74,13 @@ class TestPixivIllust(TestCase):
         data = self.multiple_illust.illust_detail
         self.assertEqual(type(data), dict)
         self.assertEqual(len(data.get("images")), 9)
+
+    @override_settings(CELERY_TASK_ALWAYS_EAGER=True)
+    def test_save_single_illust(self):
+        self.single_illust.save()
+        self.assertEqual(Image.objects.all().count(), 1)
+
+    @override_settings(CELERY_TASK_ALWAYS_EAGER=True)
+    def test_save_multiple_illust(self):
+        self.multiple_illust.save()
+        self.assertEqual(Image.objects.all().count(), 9)

@@ -35,7 +35,7 @@ def save_pixiv_illust(illust_data: dict, pyscord_data: dict) -> None:
 
 
 @shared_task(autoretry_for=(Exception,), max_retries=10, retry_backoff=True)
-def update_pixiv_image_url(illust_data: dict, image_url: str) -> None:
+def send_pixiv_image_url_to_pyscord_storage(illust_data: dict, image_url: str) -> None:
     """Change original Pixiv image url to Discord image url"""
 
     response = pyscord_storage.upload_from_url("animemoeus-waifu.jpg", image_url)
@@ -49,4 +49,4 @@ def update_pixiv_image_url(illust_data: dict, image_url: str) -> None:
 @shared_task()
 def update_pixiv_image_url_and_save_to_db(illust_data: dict) -> None:
     for image in illust_data.get("images"):
-        update_pixiv_image_url.delay(illust_data, image)
+        send_pixiv_image_url_to_pyscord_storage.delay(illust_data, image)
