@@ -1,8 +1,11 @@
-from django.test import TestCase
+from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 from rest_framework import status
 
-from .models import Image
+from waifu.views import TelegramUserWebhook
+
+from .models import Image, TelegramUser
+from .utils import PixivIllust
 
 
 class WaifuTestCase(TestCase):
@@ -48,3 +51,77 @@ class WaifuTestCase(TestCase):
         url = reverse("waifu:random")
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class TestPixivIllust(TestCase):
+    def setUp(self) -> None:
+        self.single_illust = PixivIllust("https://www.pixiv.net/en/artworks/112996839")
+        self.multiple_illust = PixivIllust('PixivIllust("https://www.pixiv.net/en/artworks/60795514')
+
+        self.dummy_illust_data = {
+            "creator_name": "depoo",
+            "creator_username": "depoo",
+            "title": "ハロウィン～高木さん＆（元）高木さん～",
+            "images": ["https://i.pximg.net/img-original/img/2023/10/31/06/19/43/112996839_p0.png"],
+            "source": "https://www.pixiv.net/en/artworks/112996839",
+        }
+        self.dummy_pixiv_image_url = "https://i.pximg.net/img-original/img/2023/10/31/06/19/43/112996839_p0.png"
+
+    def test_get_single_illust(self):
+        data = self.single_illust.illust_detail
+        self.assertEqual(type(data), dict)
+        self.assertEqual(len(data.get("images")), 1)
+
+    def test_get_multiple_illust(self):
+        data = self.multiple_illust.illust_detail
+        self.assertEqual(type(data), dict)
+        self.assertEqual(len(data.get("images")), 9)
+
+    @override_settings(CELERY_TASK_ALWAYS_EAGER=True)
+    def test_save_single_illust(self):
+        self.single_illust.save()
+        self.assertEqual(Image.objects.all().count(), 1)
+
+    @override_settings(CELERY_TASK_ALWAYS_EAGER=True)
+    def test_save_multiple_illust(self):
+        self.multiple_illust.save()
+        self.assertEqual(Image.objects.all().count(), 9)
+
+
+class TestWaifuTelegramWebhook(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.start_webhook_payload = {
+            "update_id": 188954841,
+            "message": {
+                "message_id": 6415,
+                "from": {
+                    "id": 939376599,
+                    "is_bot": "false",
+                    "first_name": "Arter",
+                    "last_name": "Tendean",
+                    "username": "artertendean",
+                    "language_code": "en",
+                },
+                "chat": {
+                    "id": 939376599,
+                    "first_name": "Arter",
+                    "last_name": "Tendean",
+                    "username": "artertendean",
+                    "type": "private",
+                },
+                "date": 1701879994,
+                "text": "/start",
+                "entities": [{"offset": 0, "length": 6, "type": "bot_command"}],
+            },
+        }
+
+    def test_start_webhook(self):
+        url = reverse("waifu:telegram-webhook")
+        response = self.client.post(path=url, data=self.start_webhook_payload, content_type="application/json")
+
+        self.assertEqual(response.status_code, 200, "The new telegram user should be created")
+        self.assertEqual(TelegramUser.objects.all().count(), 1, "The new user should be in the database")
+        self.assertEqual(
+            response.data, TelegramUserWebhook.INACTIVE_ACCOUNT_MESSAGE, "The new creator should be inactive"
+        )

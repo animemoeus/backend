@@ -3,6 +3,8 @@ import random
 import requests
 from django.db import models
 
+from models.base import BaseTelegramUserModel
+
 
 class Image(models.Model):
     image_id = models.CharField(max_length=50)
@@ -24,6 +26,10 @@ class Image(models.Model):
 
     def __str__(self):
         return f"{self.image_id}"
+
+
+class TelegramUser(BaseTelegramUserModel):
+    pass
 
 
 class DiscordWebhook(models.Model):
