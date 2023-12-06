@@ -55,8 +55,8 @@ class RandomWaifuView(GenericAPIView):
 
 
 class TelegramUserWebhook(APIView):
-    # def get(self, request):
-    #     return Response("arter")
+    BANNED_ACCOUNT_MESSAGE = "You are banned! ☠️"
+    INACTIVE_ACCOUNT_MESSAGE = "Contact admin to activate your account 🚀"
 
     def post(self, request) -> Response:
         webhook = TelegramWebhookParser(request.body)
@@ -75,12 +75,12 @@ class TelegramUserWebhook(APIView):
             )
 
         if telegram_user.is_banned:
-            telegram_user.send_message("You are banned! ☠️")
-            return Response()
+            telegram_user.send_message(TelegramUserWebhook.BANNED_ACCOUNT_MESSAGE)
+            return Response(TelegramUserWebhook.BANNED_ACCOUNT_MESSAGE)
 
         if not telegram_user.is_active:
-            telegram_user.send_message("Contact admin to activate your account 🚀")
-            return Response()
+            telegram_user.send_message(TelegramUserWebhook.INACTIVE_ACCOUNT_MESSAGE)
+            return Response(TelegramUserWebhook.INACTIVE_ACCOUNT_MESSAGE)
 
         if webhook.data.get("text_message") == "/start":
             telegram_user.send_message("(～￣▽￣)～")

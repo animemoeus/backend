@@ -1,8 +1,10 @@
-from django.test import TestCase, override_settings
+from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 from rest_framework import status
 
-from .models import Image
+from waifu.views import TelegramUserWebhook
+
+from .models import Image, TelegramUser
 from .utils import PixivIllust
 
 
@@ -84,3 +86,42 @@ class TestPixivIllust(TestCase):
     def test_save_multiple_illust(self):
         self.multiple_illust.save()
         self.assertEqual(Image.objects.all().count(), 9)
+
+
+class TestWaifuTelegramWebhook(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.start_webhook_payload = {
+            "update_id": 188954841,
+            "message": {
+                "message_id": 6415,
+                "from": {
+                    "id": 939376599,
+                    "is_bot": "false",
+                    "first_name": "Arter",
+                    "last_name": "Tendean",
+                    "username": "artertendean",
+                    "language_code": "en",
+                },
+                "chat": {
+                    "id": 939376599,
+                    "first_name": "Arter",
+                    "last_name": "Tendean",
+                    "username": "artertendean",
+                    "type": "private",
+                },
+                "date": 1701879994,
+                "text": "/start",
+                "entities": [{"offset": 0, "length": 6, "type": "bot_command"}],
+            },
+        }
+
+    def test_start_webhook(self):
+        url = reverse("waifu:telegram-webhook")
+        response = self.client.post(path=url, data=self.start_webhook_payload, content_type="application/json")
+
+        self.assertEqual(response.status_code, 200, "The new telegram user should be created")
+        self.assertEqual(TelegramUser.objects.all().count(), 1, "The new user should be in the database")
+        self.assertEqual(
+            response.data, TelegramUserWebhook.INACTIVE_ACCOUNT_MESSAGE, "The new creator should be inactive"
+        )
