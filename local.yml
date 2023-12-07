@@ -35,21 +35,21 @@ services:
     env_file:
       - ./.envs/.local/.postgres
 
-  docs:
-    image: backend_local_docs
-    container_name: backend_local_docs
-    build:
-      context: .
-      dockerfile: ./compose/local/docs/Dockerfile
-    env_file:
-      - ./.envs/.local/.django
-    volumes:
-      - ./docs:/docs:z
-      - ./config:/app/config:z
-      - ./backend:/app/backend:z
-    ports:
-      - '9000:9000'
-    command: /start-docs
+  # docs:
+  #   image: backend_local_docs
+  #   container_name: backend_local_docs
+  #   build:
+  #     context: .
+  #     dockerfile: ./compose/local/docs/Dockerfile
+  #   env_file:
+  #     - ./.envs/.local/.django
+  #   volumes:
+  #     - ./docs:/docs:z
+  #     - ./config:/app/config:z
+  #     - ./backend:/app/backend:z
+  #   ports:
+  #     - '9000:9000'
+  #   command: /start-docs
 
   redis:
     image: redis:6
