@@ -1,12 +1,18 @@
-# backend
+# AnimeMoeUs Backend
 
-Behold My Awesome Project!
 
 [![Built with Cookiecutter Django](https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg?logo=cookiecutter)](https://github.com/cookiecutter/cookiecutter-django/)
 [![Black code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 [![Deployment](https://github.com/animemoeus/backend/actions/workflows/deployment.yml/badge.svg)](https://github.com/animemoeus/backend/actions/workflows/deployment.yml)
+[![Uptime Robot status](https://img.shields.io/uptimerobot/status/m788586431-1256ae08e9b37721503fdef8)](https://stats.uptimerobot.com/GKy6liBGw7/788586431)
 
-License: MIT
+---
+- [🧑‍⚕️ Health Check](https://api.animemoe.us/health-check/)
+- [📈 Uptime Robot](https://stats.uptimerobot.com/GKy6liBGw7/788586431)
+- [🌸 Django Flower](https://flower.animemoe.us/)
+- [👀 Admin Panel](https://api.animemoe.us/admin/)
+---
+
 
 ## Settings
 
