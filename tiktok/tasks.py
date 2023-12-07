@@ -1,18 +1,18 @@
-import time
-
 from celery import shared_task
 
 from .models import TiktokMonitor
 from .utils import TiktokVideoNoWatermark
 
 
+@shared_task(autoretry_for=(Exception,), max_retries=25, retry_backoff=True)
+def get_user_feed(tiktok_username: str) -> None:
+    tiktok_user = TiktokVideoNoWatermark(tiktok_username)
+    tiktok_user.save_videos(tiktok_user.posts)
+
+
 @shared_task()
 def tiktok_user_monitor():
-    tiktok_users = TiktokMonitor.objects.filter(enabled=True)
+    tiktok_users = TiktokMonitor.objects.filter(enabled=True).order_by("-updated_at")
 
     for user in tiktok_users:
-        user = TiktokVideoNoWatermark(user)
-        user.save_videos(user.get_feed())
-
-        # The API has rate limits, so we need to add delay before the next request
-        time.sleep(15)
+        get_user_feed.delay(user.username)

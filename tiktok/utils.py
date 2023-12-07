@@ -13,14 +13,12 @@ class TiktokVideoNoWatermark:
     def __str__(self):
         return self.username
 
-    def get_feed(self) -> list[dict]:
+    @property
+    def posts(self) -> list[dict]:
         # Because of the API limitations, we only get the first page of the feed data.
         # TODO: Use the cursor data to get more information
         url = f"https://www.tikwm.com/api/user/posts?unique_id={self.username}&count=33"
-
         response = requests.request("GET", url)
-        if response.status_code != 200:
-            return
 
         tiktok_videos = response.json().get("data").get("videos")
         return tiktok_videos
@@ -42,7 +40,6 @@ def send_to_private_telegram_channel(video_url: str, caption: str = "") -> None:
     """Sent to private Telegram channel by via Telegram Bot"""
 
     url = f"https://api.telegram.org/bot{settings.TIKTOK_MONITOR_TELEGRAM_BOT_SECRET}/sendDocument"
-
     payload = {
         "chat_id": settings.TIKTOK_MONITOR_TELEGRAM_PRIVATE_CHANNEL_ID,
         "document": video_url,
