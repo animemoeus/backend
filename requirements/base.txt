@@ -29,3 +29,4 @@ django-hosts==6.0  # https://github.com/jazzband/django-hosts
 # arter tendean
 pixivpy3==3.7.4  # https://github.com/upbit/pixivpy
 pyscord-storage==2.0.3 # https://github.com/animemoeus/pyscord-storage
+django-health-check==3.17.0 # https://github.com/revsys/django-health-check
