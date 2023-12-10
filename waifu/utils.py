@@ -7,13 +7,12 @@ from .tasks import update_pixiv_image_url_and_save_to_db
 
 
 class PixivIllust:
-    __api = AppPixivAPI()
-    __api.auth(refresh_token=settings.PIXIVPY_3_REFRESH_TOKEN)
-
     IllustDetail = Any
 
     def __init__(self, illust_link: str) -> None:
         self.__illust_link = illust_link
+        self.__api = AppPixivAPI()
+        self.__api.auth(refresh_token=settings.PIXIVPY_3_REFRESH_TOKEN)
 
     @property
     def illust_detail(self) -> IllustDetail:

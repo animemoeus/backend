@@ -56,7 +56,7 @@ class WaifuTestCase(TestCase):
 class TestPixivIllust(TestCase):
     def setUp(self) -> None:
         self.single_illust = PixivIllust("https://www.pixiv.net/en/artworks/112996839")
-        self.multiple_illust = PixivIllust('PixivIllust("https://www.pixiv.net/en/artworks/60795514')
+        self.multiple_illust = PixivIllust("https://www.pixiv.net/en/artworks/60795514")
 
         self.dummy_illust_data = {
             "creator_name": "depoo",
