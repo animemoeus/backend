@@ -76,14 +76,12 @@ services:
       - --config.file=/etc/prometheus/prometheus.yml
       - --web.config.file=/etc/prometheus/web.yml
 
-  # grafana:
-  #   image: grafana/grafana
-  #   environment:
-  #     GF_INSTALL_PLUGINS: "grafana-clock-panel,grafana-simple-json-datasource"
-  #   restart: 'no'
-  #   volumes:
-  #     - grafana_data:/var/lib/grafana
-  #   ports:
-  #     - 3000:3000
-  #   depends_on:
-  #     - prometheus
+  grafana:
+    image: grafana/grafana
+    restart: 'no'
+    volumes:
+      - grafana_data:/var/lib/grafana
+    ports:
+      - 3000:3000
+    depends_on:
+      - prometheus
