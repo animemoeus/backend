@@ -89,6 +89,7 @@ THIRD_PARTY_APPS = [
     "health_check.contrib.migrations",
     "health_check.contrib.celery",
     "health_check.contrib.celery_ping",
+    "django_prometheus",
 ]
 
 LOCAL_APPS = [
@@ -141,6 +142,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#middleware
 MIDDLEWARE = [
+    "django_prometheus.middleware.PrometheusBeforeMiddleware",
     "django_hosts.middleware.HostsRequestMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "corsheaders.middleware.CorsMiddleware",
@@ -154,6 +156,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
     "django_hosts.middleware.HostsResponseMiddleware",
+    "django_prometheus.middleware.PrometheusAfterMiddleware",
 ]
 
 # django-hosts
