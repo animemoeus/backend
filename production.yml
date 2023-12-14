@@ -4,6 +4,8 @@ volumes:
   production_postgres_data: {}
   production_postgres_data_backups: {}
   production_django_media: {}
+  prometheus_data: {}
+  grafana_data: {}
 
 services:
   django: &django
@@ -62,3 +64,26 @@ services:
       - production_django_media:/usr/share/nginx/media:ro
     ports:
       - 80:80
+
+  prometheus:
+    image: prom/prometheus
+    restart: 'no'
+    volumes:
+      - prometheus_data:/prometheus
+      - ./compose/production/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./compose/production/prometheus/web.yml:/etc/prometheus/web.yml
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --web.config.file=/etc/prometheus/web.yml
+
+  # grafana:
+  #   image: grafana/grafana
+  #   environment:
+  #     GF_INSTALL_PLUGINS: "grafana-clock-panel,grafana-simple-json-datasource"
+  #   restart: 'no'
+  #   volumes:
+  #     - grafana_data:/var/lib/grafana
+  #   ports:
+  #     - 3000:3000
+  #   depends_on:
+  #     - prometheus
