@@ -16,6 +16,7 @@ class TiktokMonitor(models.Model):
 
 class SavedTiktokVideo(models.Model):
     id = models.CharField(max_length=25, primary_key=True)
+    tiktok_user = models.ForeignKey(TiktokMonitor, on_delete=models.CASCADE, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

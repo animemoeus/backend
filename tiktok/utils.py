@@ -1,5 +1,6 @@
 import requests
 from django.conf import settings
+from saiyaku import retry
 
 from .models import SavedTiktokVideo
 
@@ -23,19 +24,49 @@ class TiktokVideoNoWatermark:
         tiktok_videos = response.json().get("data").get("videos")
         return tiktok_videos
 
-    def save_videos(self, videos: list[dict]) -> bool:
-        if not videos:
-            return False
+    @retry(tries=10, delay=10)
+    def get_post_data_once(self):
+        url = f"https://www.tikwm.com/api/user/posts?unique_id={self.username}&count=50"
+        response = requests.request("GET", url)
 
+        data = response.json().get("data")
+        return data
+
+    @retry(tries=10, delay=10)
+    def get_post_data_with_cursor(self, cursor=0):
+        url = f"https://www.tikwm.com/api/user/posts?unique_id={self.username}&count=50&cursor={cursor}"
+        response = requests.request("GET", url)
+
+        data = response.json().get("data")
+        return data
+
+    @retry(tries=10, delay=10)
+    def get_all_post(self):
+        data = self.get_post_data_once()
+        cursor = data.get("cursor")
+        has_more = data.get("hasMore")
+        videos = data.get("videos")
+
+        while has_more:
+            data = self.get_post_data_with_cursor(cursor=cursor)
+            cursor = data.get("cursor")
+            has_more = data.get("hasMore")
+            videos += data.get("videos")
+
+            if not has_more:
+                break
+
+        return videos[::-1]
+
+    def save_videos(self):
         # Only send video that not sent yet
-        for video in videos[::-1]:
+        for video in self.get_all_post():
             if not SavedTiktokVideo.objects.filter(id=video.get("video_id")).exists():
                 SavedTiktokVideo.objects.create(id=video.get("video_id"))
                 send_to_private_telegram_channel(video.get("play"), video.get("title"))
 
-        return True
 
-
+@retry(tries=10, delay=1)
 def send_to_private_telegram_channel(video_url: str, caption: str = "") -> None:
     """Sent to private Telegram channel by via Telegram Bot"""
 
