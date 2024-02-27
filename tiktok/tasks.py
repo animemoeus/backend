@@ -1,3 +1,5 @@
+import time
+
 from celery import shared_task
 
 from .models import TiktokMonitor
@@ -16,3 +18,4 @@ def tiktok_user_monitor():
 
     for user in tiktok_users:
         get_user_feed.delay(user.username)
+        time.sleep(30)
