@@ -90,6 +90,7 @@ THIRD_PARTY_APPS = [
     "health_check.contrib.migrations",
     "health_check.contrib.celery",
     "health_check.contrib.celery_ping",
+    "solo",
 ]
 
 LOCAL_APPS = [
@@ -97,6 +98,7 @@ LOCAL_APPS = [
     # Your stuff: custom apps go here
     "tiktok",
     "waifu",
+    "twitter_downloader",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -366,3 +368,11 @@ TIKTOK_MONITOR_TELEGRAM_PRIVATE_CHANNEL_ID = env.str("TIKTOK_MONITOR_TELEGRAM_PR
 # Waifu
 PIXIVPY_3_REFRESH_TOKEN = env.str("PIXIVPY_3_REFRESH_TOKEN", default="")
 WAIFU_TELEGRAM_BOT_TOKEN = env.str("WAIFU_TELEGRAM_BOT_TOKEN", default="")
+
+
+# twitter_video_downloader
+TWITTER_DOWNLOADER_API_URL = env.str("TWITTER_DOWNLOADER_API_URL", default="")
+TWITTER_DOWNLOADER_KEY = env.str("TWITTER_DOWNLOADER_KEY", default="")
+TWITTER_DOWNLOADER_HOST = env.str("TWITTER_DOWNLOADER_HOST", default="")
+TWITTER_DOWNLOADER_COOKIE = env.str("TWITTER_DOWNLOADER_COOKIE", default="")
+TWITTER_VIDEO_DOWNLOADER_BOT_TOKEN = env.str("TWITTER_VIDEO_DOWNLOADER_BOT_TOKEN", default="")

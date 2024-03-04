@@ -2,7 +2,6 @@ import json
 from typing import Literal
 
 import requests
-from django.conf import settings
 from django.db import models
 
 
@@ -10,7 +9,7 @@ class BaseTelegramUserModel(models.Model):
     class Meta:
         abstract = True
 
-    BOT_TOKEN = settings.WAIFU_TELEGRAM_BOT_TOKEN
+    BOT_TOKEN = None
 
     user_id = models.CharField(max_length=25)
     first_name = models.CharField(max_length=255)
@@ -27,7 +26,7 @@ class BaseTelegramUserModel(models.Model):
         return f"{self.first_name} {self.last_name}"
 
     def send_chat_action(self, action: Literal["typing"]) -> None:
-        url = f"https://api.telegram.org/bot{settings.WAIFU_TELEGRAM_BOT_TOKEN}/sendChatAction"
+        url = f"https://api.telegram.org/bot{self.BOT_TOKEN}/sendChatAction"
         payload = json.dumps({"chat_id": self.user_id, "action": "typing"})
         headers = {"Content-Type": "application/json"}
 
@@ -36,7 +35,7 @@ class BaseTelegramUserModel(models.Model):
     def send_message(self, message: str):
         self.send_chat_action("typing")
 
-        url = f"https://api.telegram.org/bot{settings.WAIFU_TELEGRAM_BOT_TOKEN}/sendMessage"
+        url = f"https://api.telegram.org/bot{self.BOT_TOKEN}/sendMessage"
         payload = json.dumps({"chat_id": self.user_id, "text": message})
         headers = {"Content-Type": "application/json"}
         requests.request("POST", url, headers=headers, data=payload)
