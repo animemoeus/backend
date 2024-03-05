@@ -4,7 +4,7 @@ from django.http import HttpRequest
 
 
 class TelegramWebhookParser:
-    def __init__(self, request: HttpRequest) -> None | dict:
+    def __init__(self, request: HttpRequest):
         self.request = request
 
     @property
