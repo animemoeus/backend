@@ -7,6 +7,7 @@ from backend.utils.telegram import TelegramWebhookParser
 
 from .models import Settings as TwitterDownloaderSettings
 from .models import TelegramUser
+from .utils import TwitterDownloader
 
 
 class TelegramWebhookView(APIView):
@@ -86,7 +87,12 @@ class TelegramWebhookView(APIView):
         urls = re.findall(r"https://\S+", message.lower())
         url = urls[0] if urls else None
 
-        print(url)
+        tweet_data = TwitterDownloader.get_video_data(url)
+        if not tweet_data:
+            telegram_user.send_message("Sorry, I can't find any video in that tweet link.")
+            return Response()
+
+        telegram_user.send_video(tweet_data)
 
     def handle_other_messages(self, telegram_user):
         telegram_user.send_message(

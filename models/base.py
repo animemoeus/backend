@@ -27,7 +27,7 @@ class BaseTelegramUserModel(models.Model):
 
     def send_chat_action(self, action: Literal["typing"]) -> None:
         url = f"https://api.telegram.org/bot{self.BOT_TOKEN}/sendChatAction"
-        payload = json.dumps({"chat_id": self.user_id, "action": "typing"})
+        payload = json.dumps({"chat_id": self.user_id, "action": action})
         headers = {"Content-Type": "application/json"}
 
         requests.request("POST", url, headers=headers, data=payload)
@@ -37,5 +37,13 @@ class BaseTelegramUserModel(models.Model):
 
         url = f"https://api.telegram.org/bot{self.BOT_TOKEN}/sendMessage"
         payload = json.dumps({"chat_id": self.user_id, "text": message})
+        headers = {"Content-Type": "application/json"}
+        requests.request("POST", url, headers=headers, data=payload)
+
+    def send_document(self, document, caption="") -> None:
+        self.send_chat_action("upload_document")
+
+        url = f"https://api.telegram.org/bot{self.BOT_TOKEN}/sendDocument"
+        payload = json.dumps({"chat_id": self.user_id, "document": document, "caption": caption, "parse_mode": "HTML"})
         headers = {"Content-Type": "application/json"}
         requests.request("POST", url, headers=headers, data=payload)
