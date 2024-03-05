@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 
 from backend.utils.telegram import TelegramWebhookParser
 
+from .models import DownloadedTweet
 from .models import Settings as TwitterDownloaderSettings
 from .models import TelegramUser
 from .utils import TwitterDownloader
@@ -95,6 +96,15 @@ class TelegramWebhookView(APIView):
             return Response()
 
         telegram_user.send_video(tweet_data)
+
+        # TODO: Just for testing only, update this code later :)
+        try:
+            DownloadedTweet.objects.create(
+                tweet_url="message",
+                user=telegram_user,
+            )
+        except Exception:
+            pass
 
     def handle_other_messages(self, telegram_user):
         telegram_user.send_message(
