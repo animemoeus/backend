@@ -13,6 +13,8 @@ from .utils import TwitterDownloader
 class TelegramWebhookView(APIView):
     def post(self, request):
         webhook = TelegramWebhookParser(request.body)
+        if not webhook.data:
+            return Response()
 
         # Get or create TelegramUser
         user_data = webhook.data.get("user")

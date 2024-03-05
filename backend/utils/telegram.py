@@ -19,7 +19,7 @@ class TelegramWebhookParser:
             return None
 
         # Reject if messaage is not text message
-        if not data.get("message").get("text"):
+        if data.get("message") and not data.get("text"):
             return None
 
         user = data.get("message").get("from")
