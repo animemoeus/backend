@@ -30,6 +30,9 @@ class TwitterDownloader:
         except ValueError:
             return None
 
+        if not response.get("data"):
+            return None
+
         if response.get("data") and response.get("data")[0].get("type") != "video":
             return None
 
