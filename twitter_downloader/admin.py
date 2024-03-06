@@ -16,6 +16,10 @@ class TelegramUserAdmin(admin.ModelAdmin):
 class DownloadedTweetAdmin(admin.ModelAdmin):
     list_display = ("tweet_url", "telegram_user", "created_at")
     readonly_fields = ("tweet_url", "telegram_user", "created_at")
+    ordering = ("-created_at",)
+
+    def has_add_permission(self, request):
+        return False
 
 
 admin.site.register(TwitterDownloaderSettings, SingletonModelAdmin)

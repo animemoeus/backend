@@ -95,12 +95,12 @@ class TelegramWebhookView(APIView):
             telegram_user.send_message("Sorry, I can't find any video in that tweet link.")
             return Response()
 
-        telegram_user.send_video(tweet_data)
-
-        DownloadedTweet.objects.create(
+        downloaded_tweet = DownloadedTweet.objects.create(
             tweet_url=message,
             telegram_user=telegram_user,
+            tweet_data=tweet_data,
         )
+        downloaded_tweet.send_to_telegram_user()
 
     def handle_other_messages(self, telegram_user):
         telegram_user.send_message(

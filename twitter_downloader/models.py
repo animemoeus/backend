@@ -1,4 +1,5 @@
 import json
+import uuid
 
 import requests
 from django.conf import settings
@@ -62,13 +63,18 @@ class TelegramUser(BaseTelegramUserModel):
 
 
 class DownloadedTweet(models.Model):
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     telegram_user = models.ForeignKey(TelegramUser, on_delete=models.CASCADE)
     tweet_url = models.URLField(max_length=255)
+    tweet_data = models.JSONField(default=dict)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.tweet_url
+
+    def send_to_telegram_user(self):
+        self.telegram_user.send_video(self.tweet_data)
 
 
 class Settings(SingletonModel):
