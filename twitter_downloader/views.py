@@ -97,14 +97,10 @@ class TelegramWebhookView(APIView):
 
         telegram_user.send_video(tweet_data)
 
-        # TODO: Just for testing only, update this code later :)
-        try:
-            DownloadedTweet.objects.create(
-                tweet_url="message",
-                user=telegram_user,
-            )
-        except Exception:
-            pass
+        DownloadedTweet.objects.create(
+            tweet_url=message,
+            telegram_user=telegram_user,
+        )
 
     def handle_other_messages(self, telegram_user):
         telegram_user.send_message(
