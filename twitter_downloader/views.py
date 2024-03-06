@@ -41,6 +41,10 @@ class TelegramWebhookView(APIView):
             telegram_user.send_maintenance_message()
             return Response()
 
+        if telegram_user.is_banned:
+            telegram_user.send_banned_message()
+            return Response()
+
         text_message = webhook.data.get("text_message")
         if text_message:
             self.handle_text_message(telegram_user, text_message)

@@ -63,6 +63,10 @@ class TelegramUser(BaseTelegramUserModel):
         if response.status_code != 200:
             self.send_photo(tweet_data)
 
+    def send_banned_message(self):
+        message = "Sorry, you are banned from using this bot.\n\nPlease contact the bot owner for more information."
+        self.send_message(message)
+
 
 class DownloadedTweet(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
