@@ -12,6 +12,8 @@ from models.base import BaseTelegramUserModel
 class TelegramUser(BaseTelegramUserModel):
     BOT_TOKEN = settings.TWITTER_VIDEO_DOWNLOADER_BOT_TOKEN
 
+    request_count = models.PositiveIntegerField(default=0)
+
     def send_maintenance_message(self):
         message = "Sorry, the bot is currently under maintenance.\n\nPlease try again later."
         self.send_message(message)

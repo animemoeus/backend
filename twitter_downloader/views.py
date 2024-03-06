@@ -33,6 +33,7 @@ class TelegramWebhookView(APIView):
         telegram_user.first_name = user_data.get("first_name")
         telegram_user.last_name = user_data.get("last_name") or ""
         telegram_user.username = user_data.get("username") or ""
+        telegram_user.request_count += 1
         telegram_user.save()
 
         # Check if the bot is under maintenance
