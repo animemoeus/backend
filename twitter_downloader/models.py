@@ -4,6 +4,7 @@ import uuid
 import requests
 from django.conf import settings
 from django.db import models
+from django.urls import reverse
 from solo.models import SingletonModel
 
 from models.base import BaseTelegramUserModel
@@ -63,9 +64,35 @@ class TelegramUser(BaseTelegramUserModel):
         if response.status_code != 200:
             self.send_photo(tweet_data)
 
-    def send_banned_message(self):
-        message = "Sorry, you are banned from using this bot.\n\nPlease contact the bot owner for more information."
-        self.send_message(message)
+    def send_image_with_inline_keyboard(
+        self,
+        image_url: str,
+        inline_text: str,
+        inline_url: str,
+    ):
+        url = f"https://api.telegram.org/bot{self.BOT_TOKEN}/sendPhoto"
+        headers = {"Content-Type": "application/json"}
+
+        payload = json.dumps(
+            {
+                "chat_id": self.user_id,
+                "photo": image_url,
+                "parse_mode": "HTML",
+                "disable_web_page_preview": "True",
+                "reply_markup": {
+                    "inline_keyboard": [
+                        [
+                            {
+                                "text": inline_text,
+                                "web_app": {"url": inline_url},
+                            }
+                        ],
+                    ]
+                },
+            }
+        )
+
+        requests.request("POST", url, headers=headers, data=payload)
 
 
 class DownloadedTweet(models.Model):
@@ -80,7 +107,9 @@ class DownloadedTweet(models.Model):
         return self.tweet_url
 
     def send_to_telegram_user(self):
-        self.telegram_user.send_video(self.tweet_data)
+        url = f'https://9f16-2a09-bac1-34a0-18-00-221-2.ngrok-free.app{reverse("twitter-downloader:safelink")}?key={str(self.uuid)}'
+        print(url)
+        self.telegram_user.send_image_with_inline_keyboard(self.tweet_data.get("thumbnail"), "Download", url)
 
 
 class Settings(SingletonModel):

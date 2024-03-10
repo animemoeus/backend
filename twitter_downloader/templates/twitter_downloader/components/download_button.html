@@ -1,0 +1,29 @@
+<div>
+  <form action="{% url 'twitter-downloader:safelink' %}" method="post">
+    {% csrf_token %}
+    <div class="text-center">
+      <h3 id="countdown"></h3>
+      <input type="hidden" name="uuid" value="{{ uuid }}" />
+      <button type="submit" id="downloadButton" class="btn btn-primary" disabled>Download Video</button>
+    </div>
+  </form>
+  <script>
+    let count = 5;
+
+    function updateCountdown() {
+      const countdownElement = document.getElementById("downloadButton");
+      if (count > 0) {
+        countdownElement.textContent = `Please wait ${count}...`;
+        count--;
+        setTimeout(updateCountdown, 1000);
+      } else {
+        countdownElement.textContent = "";
+        countdownElement.textContent = `Send to my Telegram`;
+        document.getElementById("downloadButton").removeAttribute("disabled");
+      }
+    }
+
+
+    updateCountdown();
+  </script>
+</div>
