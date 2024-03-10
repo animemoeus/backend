@@ -19,6 +19,10 @@ class TelegramUser(BaseTelegramUserModel):
         message = "Sorry, the bot is currently under maintenance.\n\nPlease try again later."
         self.send_message(message)
 
+    def send_banned_message(self):
+        message = "Sorry, you are banned from using this bot.\n\nPlease contact the bot owner for more information."
+        self.send_message(message)
+
     def send_photo(self, message):
         self.send_chat_action("upload_photo")
 
