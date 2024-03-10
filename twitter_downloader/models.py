@@ -111,7 +111,7 @@ class DownloadedTweet(models.Model):
         return self.tweet_url
 
     def send_to_telegram_user(self):
-        url = f'https://9f16-2a09-bac1-34a0-18-00-221-2.ngrok-free.app{reverse("twitter-downloader:safelink")}?key={str(self.uuid)}'
+        url = f'https://api.animemoe.us{reverse("twitter-downloader:safelink")}?key={str(self.uuid)}'
         print(url)
         self.telegram_user.send_image_with_inline_keyboard(self.tweet_data.get("thumbnail"), "Download", url)
 
