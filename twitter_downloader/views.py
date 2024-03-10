@@ -1,5 +1,8 @@
 import re
 
+from django.shortcuts import render
+from django.views import View
+from django.views.decorators.clickjacking import xframe_options_exempt
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -9,6 +12,21 @@ from .models import DownloadedTweet
 from .models import Settings as TwitterDownloaderSettings
 from .models import TelegramUser
 from .utils import TwitterDownloader
+
+
+class SafelinkView(View):
+    @xframe_options_exempt
+    def get(self, request):
+        uuid = request.GET.get("key")
+        return render(request, "twitter_downloader/download.html", context={"uuid": uuid})
+
+    def post(self, request):
+        uuid = request.POST.get("uuid")
+
+        tweet = DownloadedTweet.objects.get(uuid=uuid)
+        tweet.telegram_user.send_video(tweet.tweet_data)
+
+        return render(request, "twitter_downloader/success.html")
 
 
 class TelegramWebhookView(APIView):
@@ -55,7 +73,7 @@ class TelegramWebhookView(APIView):
     def is_maintenance(self):
         return TwitterDownloaderSettings.objects.get().is_maintenance
 
-    def handle_text_message(self, telegram_user, message):
+    def handle_text_message(self, telegram_user: TelegramUser, message: str):
         # Handle /start command
         if message.lower().startswith("/start"):
             self.handle_start_command(telegram_user)
