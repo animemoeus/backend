@@ -45,12 +45,12 @@ repos:
       - id: flake8
         args: [--max-line-length=255]
 
-  - repo: https://github.com/Riverside-Healthcare/djLint
-    rev: v1.34.0
-    hooks:
-      - id: djlint-reformat-django
-      - id: djlint-django
-        args: [--ignore=H021]
+  # - repo: https://github.com/Riverside-Healthcare/djLint
+  #   rev: v1.34.0
+  #   hooks:
+  #     - id: djlint-reformat-django
+  #     - id: djlint-django
+  #       args: [--ignore=H021]
 
 # sets up .pre-commit-ci.yaml to ensure pre-commit dependencies stay up to date
 ci:
