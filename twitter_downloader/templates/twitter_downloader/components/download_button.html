@@ -8,7 +8,7 @@
     </div>
   </form>
   <script>
-    let count = 10;
+    let count = 15;
 
     function updateCountdown() {
       const countdownElement = document.getElementById("downloadButton");
@@ -18,7 +18,7 @@
         setTimeout(updateCountdown, 1000);
       } else {
         countdownElement.textContent = "";
-        countdownElement.textContent = `Send to my Telegram`;
+        countdownElement.textContent = `Continue`;
         document.getElementById("downloadButton").removeAttribute("disabled");
       }
     }
