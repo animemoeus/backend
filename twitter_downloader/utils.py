@@ -32,7 +32,7 @@ class TwitterDownloader:
         response = requests.get(cls.URL, headers=cls.HEADERS, params=querystring)
 
         # Raise too many request exception to trigger auto retry
-        if response.status_code == 200:
+        if response.status_code == 429:
             raise TooManyRequestException
 
         try:
