@@ -2,11 +2,6 @@ import re
 
 import requests
 from django.conf import settings
-from saiyaku import retry
-
-
-class TooManyRequestException(Exception):
-    pass
 
 
 class TwitterDownloader:
@@ -22,7 +17,6 @@ class TwitterDownloader:
         self.HEADERS = headers
 
     @classmethod
-    @retry(exceptions=TooManyRequestException, delay=1, tries=5)
     def get_video_data(cls, tweet_url: str):
         querystring = {
             "url": tweet_url,
@@ -30,10 +24,6 @@ class TwitterDownloader:
         }
 
         response = requests.get(cls.URL, headers=cls.HEADERS, params=querystring)
-
-        # Raise too many request exception to trigger auto retry
-        if response.status_code == 200:
-            raise TooManyRequestException
 
         try:
             response = response.json()
