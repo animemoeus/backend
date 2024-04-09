@@ -1,14 +1,16 @@
 <div>
   <form action="{% url 'twitter-downloader:safelink' %}" method="post">
     {% csrf_token %}
-    <div class="text-center">
+    <div class="text-center p-0 m-0">
       <h3 id="countdown"></h3>
       <input type="hidden" name="uuid" value="{{ uuid }}" />
       <button type="submit"
               id="downloadButton"
-              class="btn btn-link mx-0 my-0 px-0 py-0 text-decoration-none"
+              class="btn btn-link mx-0 my-0 px-0 py-0 text-decoration-none text-small"
               disabled
-              onclick="this.innerHTML = 'Sending...';">Download Video</button>
+              onclick="this.innerHTML = 'Sending...';">
+        <small>Download Video</small>
+      </button>
     </div>
   </form>
   <script>
