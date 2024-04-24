@@ -96,6 +96,7 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "backend.users",
     # Your stuff: custom apps go here
+    "discord",
     "tiktok",
     "waifu",
     "twitter_downloader",

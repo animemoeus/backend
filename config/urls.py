@@ -16,6 +16,7 @@ urlpatterns = [
     path("users/", include("backend.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
+    path("discord/", include("discord.urls", namespace="discord")),
     path("tiktok/", include("tiktok.urls", namespace="tiktok")),
     path("waifu/", include("waifu.urls", namespace="waifu")),
     path("health-check/", include("health_check.urls", namespace="health-check")),
