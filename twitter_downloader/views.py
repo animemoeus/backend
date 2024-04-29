@@ -15,9 +15,11 @@ from .utils import TwitterDownloader
 
 
 class SafelinkView(View):
+    # This decorator is used to allow the iframe to load the page (from Telegram app)
     @xframe_options_exempt
     def get(self, request):
-        uuid = request.GET.get("key")
+        uuid = request.GET.get("key", None)
+
         return render(request, "twitter_downloader/download.html", context={"uuid": uuid})
 
     def post(self, request):
