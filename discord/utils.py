@@ -5,10 +5,10 @@ from django.conf import settings
 
 
 class DiscordAPI:
-    def __init__(self, url: str) -> None:
-        self.url = url
+    def __init__(self) -> None:
+        pass
 
-    @classmethod
+    @staticmethod
     def refresh_url(self, url: str) -> dict:
         payload = json.dumps({"attachment_urls": [url]})
 
