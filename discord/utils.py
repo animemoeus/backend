@@ -9,7 +9,7 @@ class DiscordAPI:
         pass
 
     @staticmethod
-    def refresh_url(self, url: str) -> str:
+    def refresh_url(url: str) -> str:
         payload = json.dumps({"attachment_urls": [url]})
 
         headers = {
