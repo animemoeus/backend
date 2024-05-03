@@ -27,6 +27,10 @@ django-import-export==3.3.8  # https://github.com/django-import-export/django-im
 django-hosts==6.0  # https://github.com/jazzband/django-hosts
 
 
+# discord
+django-ninja==1.1.0 # https://github.com/vitalik/django-ninja
+
+
 # arter tendean
 pixivpy3==3.7.5  # https://github.com/upbit/pixivpy
 pyscord-storage==2.0.3 # https://github.com/animemoeus/pyscord-storage

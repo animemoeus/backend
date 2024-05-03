@@ -49,7 +49,7 @@ class DiscordWebhook(models.Model):
 
         # read image as file object
         file = requests.get(
-            image_url,
+            f"https://api.animemoe.us/discord/refresh/?url={image_url}",
             stream=True,
             timeout=5,
         ).raw
