@@ -96,6 +96,7 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "backend.users",
     # Your stuff: custom apps go here
+    "discord",
     "tiktok",
     "waifu",
     "twitter_downloader",
@@ -376,3 +377,7 @@ TWITTER_DOWNLOADER_KEY = env.str("TWITTER_DOWNLOADER_KEY", default="")
 TWITTER_DOWNLOADER_HOST = env.str("TWITTER_DOWNLOADER_HOST", default="")
 TWITTER_DOWNLOADER_COOKIE = env.str("TWITTER_DOWNLOADER_COOKIE", default="")
 TWITTER_VIDEO_DOWNLOADER_BOT_TOKEN = env.str("TWITTER_VIDEO_DOWNLOADER_BOT_TOKEN", default="")
+
+# discord
+DISCORD_REFRESH_URL = env.str("DISCORD_REFRESH_URL", default="")
+DISCORD_REFRESH_URL_BOT_TOKEN = env.str("DISCORD_REFRESH_URL_BOT_TOKEN", default="")
