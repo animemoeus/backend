@@ -1,6 +1,7 @@
 import random
 
 import requests
+from django.conf import settings
 from django.db import models
 
 from models.base import BaseTelegramUserModel
@@ -29,7 +30,7 @@ class Image(models.Model):
 
 
 class TelegramUser(BaseTelegramUserModel):
-    pass
+    BOT_TOKEN = settings.TELEGRAM_BOT_TOKEN
 
 
 class DiscordWebhook(models.Model):
