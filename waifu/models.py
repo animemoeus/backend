@@ -30,7 +30,7 @@ class Image(models.Model):
 
 
 class TelegramUser(BaseTelegramUserModel):
-    BOT_TOKEN = settings.TELEGRAM_BOT_TOKEN
+    BOT_TOKEN = settings.WAIFU_TELEGRAM_BOT_TOKEN
 
 
 class DiscordWebhook(models.Model):
