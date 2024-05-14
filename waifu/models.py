@@ -1,6 +1,7 @@
 import random
 
 import requests
+from django.conf import settings
 from django.db import models
 
 from models.base import BaseTelegramUserModel
@@ -29,7 +30,7 @@ class Image(models.Model):
 
 
 class TelegramUser(BaseTelegramUserModel):
-    pass
+    BOT_TOKEN = settings.WAIFU_TELEGRAM_BOT_TOKEN
 
 
 class DiscordWebhook(models.Model):
@@ -49,7 +50,7 @@ class DiscordWebhook(models.Model):
 
         # read image as file object
         file = requests.get(
-            f"https://api.animemoe.us/discord/refresh/?url={image_url}",
+            image_url,
             stream=True,
             timeout=5,
         ).raw
