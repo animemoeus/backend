@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 volumes:
   backend_local_postgres_data: {}
@@ -20,7 +20,7 @@ services:
       - ./.envs/.local/.django
       - ./.envs/.local/.postgres
     ports:
-      - '8000:8000'
+      - "8000:8000"
     command: /start
 
   postgres:
@@ -80,5 +80,13 @@ services:
     image: backend_local_flower
     container_name: backend_local_flower
     ports:
-      - '5555:5555'
+      - "5555:5555"
     command: /start-flower
+
+  dozzle:
+    container_name: dozzle
+    image: amir20/dozzle:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 9999:8080
