@@ -1,7 +1,9 @@
 import random
 import re
 
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
+from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.generics import GenericAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -17,6 +19,19 @@ from .utils import PixivIllust
 class WaifuListView(ListAPIView):
     serializer_class = WaifuListSerialzer
     pagination_class = WaifuListPagination
+
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = [
+        "is_nsfw",
+        "creator_name",
+        "creator_username",
+        "source",
+        "created_at",
+        "updated_at",
+    ]
+    search_fields = ["caption", "creator_name", "creator_username"]
+    ordering_fields = ["created_at", "updated_at", "creator_name", "creator_username", "id"]
+    ordering = ["-id"]
 
     def get_queryset(self):
         nsfw = self.request.query_params.get("nsfw")
