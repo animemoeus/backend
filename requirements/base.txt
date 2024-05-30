@@ -12,8 +12,8 @@ flower==2.0.1  # https://github.com/mher/flower
 # ------------------------------------------------------------------------------
 django==4.2.7  # pyup: < 5.0  # https://www.djangoproject.com/
 django-environ==0.11.2  # https://github.com/joke2k/django-environ
-django-model-utils==4.5.0  # https://github.com/jazzband/django-model-utils
-django-allauth==0.62.1  # https://github.com/pennersr/django-allauth
+django-model-utils==4.5.1  # https://github.com/jazzband/django-model-utils
+django-allauth==0.63.2  # https://github.com/pennersr/django-allauth
 django-crispy-forms==2.1  # https://github.com/django-crispy-forms/django-crispy-forms
 crispy-bootstrap5==2024.2  # https://github.com/django-crispy-forms/crispy-bootstrap5
 django-redis==5.4.0  # https://github.com/jazzband/django-redis
@@ -23,7 +23,7 @@ djangorestframework==3.15.1  # https://github.com/encode/django-rest-framework
 django-cors-headers==4.3.1  # https://github.com/adamchainz/django-cors-headers
 # DRF-spectacular for api documentation
 drf-spectacular==0.27.2  # https://github.com/tfranzel/drf-spectacular
-django-import-export==3.3.8  # https://github.com/django-import-export/django-import-export
+django-import-export==4.0.6  # https://github.com/django-import-export/django-import-export
 django-hosts==6.0  # https://github.com/jazzband/django-hosts
 
 
@@ -34,5 +34,5 @@ django-ninja==1.1.0 # https://github.com/vitalik/django-ninja
 # arter tendean
 pixivpy3==3.7.5  # https://github.com/upbit/pixivpy
 pyscord-storage==2.0.3 # https://github.com/animemoeus/pyscord-storage
-django-health-check==3.18.1 # https://github.com/revsys/django-health-check
+django-health-check==3.18.2 # https://github.com/revsys/django-health-check
 saiyaku==2023.12.11 #  https://github.com/animemoeus/saiyaku
