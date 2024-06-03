@@ -16,7 +16,7 @@ class TelegramUser(BaseTelegramUserModel):
     request_count = models.PositiveIntegerField(default=0)
 
     def send_maintenance_message(self):
-        message = "Sorry, the bot is currently under maintenance.\n\nPlease try again later."
+        message = "Hello, since the revenue from ads is too low (coz there is no one clicking the ads), I have to shut down this bot to improve the server cost efficiency. \n\nThanks for using this bot ✌️"
         self.send_message(message)
 
     def send_banned_message(self):
