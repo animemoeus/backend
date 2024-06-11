@@ -18,6 +18,9 @@ ALLOWED_HOSTS = [
     "*",
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.cloudworkstations.dev",
+]
 
 # CACHES
 # ------------------------------------------------------------------------------
