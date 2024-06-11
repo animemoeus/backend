@@ -41,6 +41,11 @@ jobs:
       - name: Checkout Code Repository
         uses: actions/checkout@v4
 
+      - name: Update Environment Variable
+        run: |
+          echo "DISCORD_REFRESH_URL=${{ secrets.DISCORD_REFRESH_URL }}" >> .envs/.local/.django
+          echo "DISCORD_REFRESH_URL_BOT_TOKEN=${{ secrets.DISCORD_REFRESH_URL_BOT_TOKEN }}" >> .envs/.local/.django
+
       - name: Build the Stack
         run: docker compose -f local.yml build
 
