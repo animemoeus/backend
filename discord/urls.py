@@ -5,7 +5,7 @@ from .ninja import api as ninja
 
 urlpatterns = [
     path("", views.index, name="index"),
-    path("refresh/", ninja.urls),
+    path("refresh/", ninja.urls, name="refresh"),
 ]
 
 
