@@ -15,6 +15,14 @@
 
 ---
 
+## Discord
+
+### Refresh URL API 
+[![Uptime Robot status](https://img.shields.io/uptimerobot/status/m797080158-bcfd7f8a26110828783eff90)](https://stats.uptimerobot.com/GKy6liBGw7/797080158) [![Uptime Robot ratio (7 days)](https://img.shields.io/uptimerobot/ratio/7/m797080158-bcfd7f8a26110828783eff90)](https://stats.uptimerobot.com/GKy6liBGw7/797080158) [![Uptime Robot ratio (30 days)](https://img.shields.io/uptimerobot/ratio/m797080158-bcfd7f8a26110828783eff90)](https://stats.uptimerobot.com/GKy6liBGw7/797080158)
+
+
+---
+
 ## Settings
 
 Moved to [settings](http://cookiecutter-django.readthedocs.io/en/latest/settings.html).
