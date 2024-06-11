@@ -21,11 +21,12 @@ class DownloadedTweetAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         return False
 
-    @admin.register(ExternalLink)
-    class ExternalLinkAdmin(admin.ModelAdmin):
-        list_display = ("title", "url", "counter", "is_active", "created_at", "updated_at")
-        readonly_fields = ("counter", "created_at", "updated_at")
-        ordering = ("-id",)
+
+@admin.register(ExternalLink)
+class ExternalLinkAdmin(admin.ModelAdmin):
+    list_display = ("title", "url", "counter", "is_active", "created_at", "updated_at")
+    readonly_fields = ("counter", "created_at", "updated_at")
+    ordering = ("-id",)
 
 
 admin.site.register(TwitterDownloaderSettings, SingletonModelAdmin)
