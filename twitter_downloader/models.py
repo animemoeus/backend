@@ -115,6 +115,20 @@ class DownloadedTweet(models.Model):
         self.telegram_user.send_image_with_inline_keyboard(self.tweet_data.get("thumbnail"), "Download", url)
 
 
+class ExternalLink(models.Model):
+    title = models.CharField(max_length=255)
+    url = models.URLField(max_length=255)
+
+    counter = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+
+
 class Settings(SingletonModel):
     class Meta:
         verbose_name = "Twitter Downloader Settings"
