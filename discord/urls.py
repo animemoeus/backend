@@ -5,6 +5,7 @@ from .ninja import api as ninja
 
 urlpatterns = [
     path("", views.index, name="index"),
+    path("check/", views.check, name="check"),
     path("refresh/", ninja.urls, name="refresh"),
 ]
 
