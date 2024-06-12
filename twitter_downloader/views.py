@@ -76,7 +76,6 @@ class TelegramWebhookView(APIView):
         return TwitterDownloaderSettings.objects.get().is_maintenance
 
     def handle_text_message(self, telegram_user: TelegramUser, message: str):
-        print("handle text message")
         # Handle /start command
         if message.lower().startswith("/start"):
             self.handle_start_command(telegram_user)
