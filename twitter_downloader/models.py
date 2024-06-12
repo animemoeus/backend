@@ -125,6 +125,7 @@ class DownloadedTweet(models.Model):
 class ExternalLink(models.Model):
     title = models.CharField(max_length=255)
     url = models.URLField(max_length=255)
+    is_web_app = models.BooleanField(default=False)
 
     counter = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True)
