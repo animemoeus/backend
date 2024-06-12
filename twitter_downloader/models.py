@@ -47,6 +47,11 @@ class TelegramUser(BaseTelegramUserModel):
     def send_video(self, tweet_data):
         self.send_chat_action("upload_video")
 
+        external_link = ExternalLink.objects.filter(is_active=True).order_by("-updated_at")
+        external_link = (
+            [[{"text": i.title, "web_app": {"url": i.url}}] for i in external_link] if external_link else []
+        )
+
         url = f"https://api.telegram.org/bot{self.BOT_TOKEN}/sendVideo"
         payload = json.dumps(
             {
@@ -59,9 +64,11 @@ class TelegramUser(BaseTelegramUserModel):
                     "inline_keyboard": [
                         [{"text": f'🔗 {video["size"]}', "url": video["url"]} for video in tweet_data.get("videos")],
                     ]
+                    + external_link
                 },
             }
         )
+
         headers = {"Content-Type": "application/json"}
 
         response = requests.request("POST", url, headers=headers, data=payload)
@@ -113,6 +120,20 @@ class DownloadedTweet(models.Model):
     def send_to_telegram_user(self):
         url = f'https://api.animemoe.us{reverse("twitter-downloader:safelink")}?key={str(self.uuid)}'
         self.telegram_user.send_image_with_inline_keyboard(self.tweet_data.get("thumbnail"), "Download", url)
+
+
+class ExternalLink(models.Model):
+    title = models.CharField(max_length=255)
+    url = models.URLField(max_length=255)
+
+    counter = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
 
 
 class Settings(SingletonModel):
