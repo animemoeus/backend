@@ -49,7 +49,12 @@ class TelegramUser(BaseTelegramUserModel):
 
         external_link = ExternalLink.objects.filter(is_active=True).order_by("-updated_at")
         external_link = (
-            [[{"text": i.title, "web_app": {"url": i.url}}] for i in external_link] if external_link else []
+            [
+                [{"text": i.title, "web_app": {"url": i.url}}] if i.is_web_app else [{"text": i.title, "url": i.url}]
+                for i in external_link
+            ]
+            if external_link
+            else []
         )
 
         url = f"https://api.telegram.org/bot{self.BOT_TOKEN}/sendVideo"
