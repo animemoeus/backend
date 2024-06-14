@@ -11,7 +11,7 @@
 ---
 
 - [🧑‍⚕️ Health Check](https://api.animemoe.us/health-check/)
-- [📈 Uptime Robot](https://stats.uptimerobot.com/GKy6liBGw7/788586431)
+- [📈 Uptime Robot](https://stats.uptimerobot.com/GKy6liBGw7)
 - [🌸 Django Flower](https://flower.animemoe.us/)
 - [👀 Admin Panel](https://api.animemoe.us/admin/)
 - [📊 Docker Logs](https://dozzle.animemoe.us/)
