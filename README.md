@@ -1,4 +1,4 @@
-# AnimeMoeUs Backend
+# AnimeMoeUs Backend 
 
 [![Built with Cookiecutter Django](https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg?logo=cookiecutter)](https://github.com/cookiecutter/cookiecutter-django/)
 [![Black code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
@@ -9,6 +9,21 @@
 [![GitHub Release](https://img.shields.io/github/v/release/animemoeus/backend)](https://github.com/animemoeus/backend/releases)
 
 ---
+
+<a href="https://idx.google.com/import?url=https%3A%2F%2Fgithub.com%2Fanimemoeus%2Fbackend">
+  <picture>
+    <source
+      media="(prefers-color-scheme: dark)"
+      srcset="https://cdn.idx.dev/btn/open_dark_32.svg">
+    <source
+      media="(prefers-color-scheme: light)"
+      srcset="https://cdn.idx.dev/btn/open_light_32.svg">
+    <img
+      height="32"
+      alt="Open in IDX"
+      src="https://cdn.idx.dev/btn/open_purple_32.svg">
+  </picture>
+</a>
 
 - [🧑‍⚕️ Health Check](https://api.animemoe.us/health-check/)
 - [📈 Uptime Robot](https://stats.uptimerobot.com/GKy6liBGw7)
