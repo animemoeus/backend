@@ -10,6 +10,7 @@ from .models import TelegramUser
 class TelegramUserAdmin(admin.ModelAdmin):
     list_display = ("user_id", "first_name", "last_name", "username", "is_active", "is_banned")
     readonly_fields = ("user_id", "first_name", "last_name", "username", "created_at", "updated_at")
+    search_fields = ("user_id", "first_name", "last_name", "username")
 
 
 @admin.register(DownloadedTweet)

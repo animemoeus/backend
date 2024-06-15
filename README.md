@@ -10,8 +10,23 @@
 
 ---
 
+<a href="https://idx.google.com/import?url=https%3A%2F%2Fgithub.com%2Fanimemoeus%2Fbackend">
+  <picture>
+    <source
+      media="(prefers-color-scheme: dark)"
+      srcset="https://cdn.idx.dev/btn/open_dark_32.svg">
+    <source
+      media="(prefers-color-scheme: light)"
+      srcset="https://cdn.idx.dev/btn/open_light_32.svg">
+    <img
+      height="32"
+      alt="Open in IDX"
+      src="https://cdn.idx.dev/btn/open_purple_32.svg">
+  </picture>
+</a>
+
 - [🧑‍⚕️ Health Check](https://api.animemoe.us/health-check/)
-- [📈 Uptime Robot](https://stats.uptimerobot.com/GKy6liBGw7/788586431)
+- [📈 Uptime Robot](https://stats.uptimerobot.com/GKy6liBGw7)
 - [🌸 Django Flower](https://flower.animemoe.us/)
 - [👀 Admin Panel](https://api.animemoe.us/admin/)
 - [📊 Docker Logs](https://dozzle.animemoe.us/)
