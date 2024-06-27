@@ -1,15 +1,24 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.http import HttpResponse
 from django.urls import include, path
 from django.views import defaults as default_views
 from django.views.generic import TemplateView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
 
+
+def adsense(request):
+    ads_txt = "google.com, pub-3865845660755241, DIRECT, f08c47fec0942fa0"
+    return HttpResponse(ads_txt, content_type="text/plain")
+
+
 urlpatterns = [
     path("", TemplateView.as_view(template_name="home.html"), name="home"),
     path("about/", TemplateView.as_view(template_name="pages/about.html"), name="about"),
+    # AdSense
+    path("ads.txt", adsense),
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
     # User management
