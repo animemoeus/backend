@@ -114,7 +114,7 @@ class TelegramUser(BaseTelegramUserModel):
 class DownloadedTweet(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     telegram_user = models.ForeignKey(TelegramUser, on_delete=models.CASCADE)
-    tweet_url = models.URLField(max_length=255)
+    tweet_url = models.URLField(max_length=500)
     tweet_data = models.JSONField(default=dict)
 
     created_at = models.DateTimeField(auto_now_add=True)
