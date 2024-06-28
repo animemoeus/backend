@@ -29,7 +29,7 @@ django-hosts==6.0  # https://github.com/jazzband/django-hosts
 
 
 # discord
-django-ninja==1.1.0 # https://github.com/vitalik/django-ninja
+django-ninja==1.2.0 # https://github.com/vitalik/django-ninja
 
 
 # arter tendean
