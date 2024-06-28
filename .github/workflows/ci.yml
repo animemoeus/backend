@@ -45,6 +45,9 @@ jobs:
         run: |
           echo "DISCORD_REFRESH_URL=${{ secrets.DISCORD_REFRESH_URL }}" >> .envs/.local/.django
           echo "DISCORD_REFRESH_URL_BOT_TOKEN=${{ secrets.DISCORD_REFRESH_URL_BOT_TOKEN }}" >> .envs/.local/.django
+
+          echo "INSTAGRAM_API_URL=${{ secrets.INSTAGRAM_API_URL }}" >> .envs/.local/.django
+          echo "INSTAGRAM_API_KEY=${{ secrets.INSTAGRAM_API_KEY }}" >> .envs/.local/.django
           cat .envs/.local/.django
 
       - name: Build the Stack

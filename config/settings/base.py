@@ -98,6 +98,7 @@ LOCAL_APPS = [
     "backend.users",
     # Your stuff: custom apps go here
     "discord",
+    "instagram",
     "tiktok",
     "waifu",
     "twitter_downloader",
@@ -382,3 +383,8 @@ TWITTER_VIDEO_DOWNLOADER_BOT_TOKEN = env.str("TWITTER_VIDEO_DOWNLOADER_BOT_TOKEN
 # discord
 DISCORD_REFRESH_URL = env.str("DISCORD_REFRESH_URL", default="")
 DISCORD_REFRESH_URL_BOT_TOKEN = env.str("DISCORD_REFRESH_URL_BOT_TOKEN", default="")
+
+
+# instagram
+INSTAGRAM_API_URL = env.str("INSTAGRAM_API_URL", default="")
+INSTAGRAM_API_KEY = env.str("INSTAGRAM_API_KEY", default="")
