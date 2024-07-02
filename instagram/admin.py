@@ -14,7 +14,7 @@ class UserAdmin(admin.ModelAdmin):
     readonly_fields = (
         "full_name",
         "biography",
-        "profil_picture_url",
+        "profile_picture_url",
         "follower_count",
         "following_count",
         "api_updated_time",
