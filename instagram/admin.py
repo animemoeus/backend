@@ -1,5 +1,6 @@
 from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
+from rest_framework import status
 
 from .models import User
 
@@ -23,16 +24,16 @@ class UserAdmin(admin.ModelAdmin):
     ordering = ("username",)
 
     def response_change(self, request, obj: User):
-        if "_get-information-from-api" in request.POST:
-            self.handle_get_information_from_api(request, obj)
+        if "_update-information-from-api" in request.POST:
+            self.handle_update_information_from_api(request, obj)
             return HttpResponseRedirect(".")
 
         return super().response_change(request, obj)
 
-    def handle_get_information_from_api(self, request, obj: User):
-        result = obj.get_information_from_api()
+    def handle_update_information_from_api(self, request, obj: User):
+        code = obj.update_information_from_api()
 
-        if result:
-            self.message_user(request, "Successfully get information from API")
+        if status.is_success(code):
+            self.message_user(request, f"({code}): Successfully get information from API")
         else:
-            self.message_user(request, "Failed to get information from API", level=messages.ERROR)
+            self.message_user(request, f"({code}): Failed to get information from API", level=messages.ERROR)

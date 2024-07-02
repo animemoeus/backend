@@ -4,24 +4,29 @@ from rest_framework import status
 
 
 class InstagramAPI:
-    BASE_URL = settings.INSTAGRAM_API_URL
-    HEADERS = {"Authorization": f"Bearer {settings.INSTAGRAM_API_KEY}"}
-
-    client = requests.Session()
-    client.headers.update(HEADERS)
-
     def __init__(self):
-        pass
+        self.base_url = settings.INSTAGRAM_API_URL
+        self.headers = {"Authorization": f"Bearer {settings.INSTAGRAM_API_KEY}"}
 
-    @classmethod
-    def get_user_info_v2(cls, username: str) -> dict | None:
-        url = f"{cls.BASE_URL}/api/v1/instagram/web_app/fetch_user_info_by_username_v2"
+    def get_user_info_v2(self, username: str) -> tuple[int, dict]:
+        """
+        Get user information from Instagram API v2.
+
+        Args:
+            username: Instagram username.
+
+        Returns:
+            A tuple containing the HTTP status code and the response data.
+        """
+
+        url = self.base_url + "/api/v1/instagram/web_app/fetch_user_info_by_username_v2"
         params = {"username": username}
-        response = cls.client.get(url, params=params, timeout=30)
+        response = requests.get(url, headers=self.headers, params=params, timeout=30)
+        status_code = response.status_code
 
-        response_data = None
-        if response.status_code == status.HTTP_200_OK:
+        response_data = {}
+        if status_code == status.HTTP_200_OK:
             response = response.json()
             response_data = response.get("data")
 
-        return response_data
+        return status_code, response_data
