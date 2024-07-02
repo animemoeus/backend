@@ -30,3 +30,7 @@ class InstagramAPI:
             response_data = response.get("data")
 
         return status_code, response_data
+
+
+def user_profile_picture_upload_location(instance, filename):
+    return f"instagram/user/{instance.username}/profile-picture/{filename}"
