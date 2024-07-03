@@ -21,5 +21,26 @@ class InstagramTestCase(TestCase):
             self.user_1.profile_picture, "After update information from API, profile picture should not be None"
         )
 
+        self.assertEqual(
+            self.user_1.full_name,
+            user_1_info["full_name"],
+            "User full_name should equal with the data in the API response",
+        )
+        self.assertEqual(
+            self.user_1.biography,
+            user_1_info["biography"],
+            "User biography should equal with the data in the API response",
+        )
+        self.assertEqual(
+            self.user_1.follower_count,
+            user_1_info["follower_count"],
+            "User follower_count should equal with the data in the API response",
+        )
+        self.assertEqual(
+            self.user_1.following_count,
+            user_1_info["following_count"],
+            "User following_count should equal with the data in the API response",
+        )
+
         self.assertEqual(status_code_2, status.HTTP_400_BAD_REQUEST, "Status code should be 400 BAD REQUEST")
         self.assertEqual(user_2_info, {}, "User info should be empty")
