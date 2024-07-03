@@ -28,6 +28,13 @@ class User(models.Model):
         return f"{self.username}"
 
     def get_information_from_api(self) -> tuple[int, dict]:
+        """
+        Get Instagram user information from the API
+
+        Returns:
+            tuple[int, dict]: A tuple containing the HTTP status code and the user information.
+        """
+
         api_client = InstagramAPI()
         status_code, user_info = api_client.get_user_info_v2(self.username)
 
@@ -41,39 +48,38 @@ class User(models.Model):
 
     def update_information_from_api(self) -> int:
         status_code, user_info = self.get_information_from_api()
-
         if status_code != status.HTTP_200_OK:
             return status_code
 
-        if user_info.get("full_name"):
-            self.full_name = user_info.get("full_name")
+        if "full_name" in user_info:
+            self.full_name = user_info["full_name"]
 
-        if user_info.get("biography"):
-            self.biography = user_info.get("biography")
+        if "biography" in user_info:
+            self.biography = user_info["biography"]
+
+        if "follower_count" in user_info:
+            self.follower_count = user_info["follower_count"]
+
+        if "following_count" in user_info:
+            self.following_count = user_info["following_count"]
 
         if user_info.get("hd_profile_pic_url_info") and user_info.get("hd_profile_pic_url_info").get("url"):
             hd_profile_pic_url = user_info.get("hd_profile_pic_url_info").get("url")
 
-            # Check if the profile picture URL is empty and update the file field
+            # Check if the profile picture url is empty and update the file field
             if not self.profile_picture_url:
                 self.profile_picture_url = hd_profile_pic_url
                 self.save_from_url_to_file_field("profile_picture", "jpg", self.profile_picture_url)
 
-            # Check if the profile picture URL is not empty and update the file field
+            # Check if the profile picture is empty and update the file field
             if not self.profile_picture and self.profile_picture_url:
                 self.save_from_url_to_file_field("profile_picture", "jpg", hd_profile_pic_url)
 
-            # Check if the profile picture URL has changed and update the file field
+            # Check if the profile picture URL has changed and update the profile picture field
             if self.profile_picture_url.split("?")[0] != hd_profile_pic_url.split("?")[0]:
                 self.save_from_url_to_file_field("profile_picture", "jpg", hd_profile_pic_url)
 
             self.profile_picture_url = hd_profile_pic_url
-
-        if user_info.get("follower_count"):
-            self.follower_count = user_info.get("follower_count")
-
-        if user_info.get("following_count"):
-            self.following_count = user_info.get("following_count")
 
         self.api_updated_time = timezone.now()
         self.save()
