@@ -106,6 +106,27 @@ class User(models.Model):
 
         return stories
 
+    def update_user_stories(self) -> tuple[list, list]:
+        stories = self.get_user_stories()
+        if not stories:
+            return stories
+
+        saved_stories = []
+        for story in stories:
+            if Story.objects.filter(story_id=story["story_id"]).exists():
+                continue
+            else:
+                _ = Story.objects.create(
+                    user=self,
+                    story_id=story["story_id"],
+                    thumbnail_url=story["thumbnail_url"],
+                    media_url=story["media_url"],
+                    story_created_at=story["created_at"],
+                )
+                saved_stories.append(_)
+
+        return stories, saved_stories
+
     def save_from_url_to_file_field(self, field_name: str, file_format: str, file_url: str) -> None:
         response = requests.get(file_url, timeout=30)
 
@@ -117,6 +138,10 @@ class User(models.Model):
 
 
 class Story(models.Model):
+    class Meta:
+        verbose_name = "Story"
+        verbose_name_plural = "Stories"
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     story_id = models.CharField(max_length=50)
     thumbnail_url = models.URLField(max_length=1000)
@@ -125,5 +150,5 @@ class Story(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     story_created_at = models.DateTimeField()
 
-    # def __str__(self):
-    #     return f"{self.user.username} - {self.story_id}"
+    def __str__(self):
+        return f"{self.user.username} - {self.story_id}"

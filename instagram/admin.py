@@ -2,7 +2,7 @@ from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
 from rest_framework import status
 
-from .models import User
+from .models import Story, User
 
 
 @admin.register(User)
@@ -28,6 +28,10 @@ class UserAdmin(admin.ModelAdmin):
             self.handle_update_information_from_api(request, obj)
             return HttpResponseRedirect(".")
 
+        if "_update-stories-from-api" in request.POST:
+            self.handle_update_user_stories(request, obj)
+            return HttpResponseRedirect(".")
+
         return super().response_change(request, obj)
 
     def handle_update_information_from_api(self, request, obj: User):
@@ -37,3 +41,14 @@ class UserAdmin(admin.ModelAdmin):
             self.message_user(request, f"({code}): Successfully get information from API")
         else:
             self.message_user(request, f"({code}): Failed to get information from API", level=messages.ERROR)
+
+    def handle_update_user_stories(self, request, obj: User):
+        stories, saved_stories = obj.update_user_stories()
+        self.message_user(request, f"{len(saved_stories)}/{len(stories)} stories updated")
+
+
+@admin.register(Story)
+class StoryAdmin(admin.ModelAdmin):
+    list_display = ("user", "story_id", "created_at", "story_created_at")
+    readonly_fields = ["story_id", "created_at", "story_created_at"]
+    search_fields = ("user", "story_id")
