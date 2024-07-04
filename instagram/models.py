@@ -86,6 +86,26 @@ class User(models.Model):
 
         return status_code
 
+    def get_user_stories(self) -> list:
+        api_client = InstagramAPI()
+        status_code, raw_stories = api_client.get_user_stories(self.username)
+
+        if status_code != status.HTTP_200_OK:
+            return
+
+        stories = []
+        for story in raw_stories:
+            stories.append(
+                {
+                    "story_id": story.get("id"),
+                    "thumbnail_url": story.get("thumbnail_url_original"),
+                    "media_url": story.get("video_url_original") or story.get("thumbnail_url_original"),
+                    "created_at": story.get("taken_at_date"),
+                }
+            )
+
+        return stories
+
     def save_from_url_to_file_field(self, field_name: str, file_format: str, file_url: str) -> None:
         response = requests.get(file_url, timeout=30)
 
@@ -94,3 +114,16 @@ class User(models.Model):
 
         if hasattr(self, field_name):
             getattr(self, field_name).save(f"{uuid.uuid4()}.{file_format}", ContentFile(response.content))
+
+
+class Story(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    story_id = models.CharField(max_length=50)
+    thumbnail_url = models.URLField(max_length=1000)
+    media_url = models.URLField(max_length=1000, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    story_created_at = models.DateTimeField()
+
+    # def __str__(self):
+    #     return f"{self.user.username} - {self.story_id}"
