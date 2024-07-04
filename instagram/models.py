@@ -3,10 +3,12 @@ import uuid
 import requests
 from django.core.files.base import ContentFile
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils import timezone
 from rest_framework import status
 
-from .utils import InstagramAPI, user_profile_picture_upload_location
+from .utils import InstagramAPI, user_profile_picture_upload_location, user_stories_upload_location
 
 
 class User(models.Model):
@@ -116,14 +118,14 @@ class User(models.Model):
             if Story.objects.filter(story_id=story["story_id"]).exists():
                 continue
             else:
-                _ = Story.objects.create(
+                x = Story.objects.create(
                     user=self,
                     story_id=story["story_id"],
                     thumbnail_url=story["thumbnail_url"],
                     media_url=story["media_url"],
                     story_created_at=story["created_at"],
                 )
-                saved_stories.append(_)
+                saved_stories.append(x)
 
         return stories, saved_stories
 
@@ -142,13 +144,37 @@ class Story(models.Model):
         verbose_name = "Story"
         verbose_name_plural = "Stories"
 
+    story_id = models.CharField(max_length=50, primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    story_id = models.CharField(max_length=50)
     thumbnail_url = models.URLField(max_length=1000)
     media_url = models.URLField(max_length=1000, blank=True)
+
+    thumbnail = models.ImageField(upload_to=user_stories_upload_location, blank=True, null=True)
+    media = models.FileField(upload_to=user_stories_upload_location, blank=True, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     story_created_at = models.DateTimeField()
 
     def __str__(self):
         return f"{self.user.username} - {self.story_id}"
+
+    def save_from_url_to_file_field(self, field_name: str, file_format: str, file_url: str) -> None:
+        response = requests.get(file_url, timeout=30)
+
+        if not response.status_code == status.HTTP_200_OK:
+            return
+
+        if hasattr(self, field_name):
+            getattr(self, field_name).save(f"{uuid.uuid4()}.{file_format}", ContentFile(response.content))
+
+
+@receiver(post_save, sender=Story)
+def story_post_save(sender, instance, **kwargs):
+    # Check if the thumbnail is empty and update the file field
+    if not instance.thumbnail:
+        instance.save_from_url_to_file_field("thumbnail", "jpg", instance.thumbnail_url)
+
+    # Check if the media is empty and update the file field
+    if not instance.media and instance.media_url:
+        media_type = instance.media_url.split("?")[0].split(".")[-1]  # Should be jpg or mp4
+        instance.save_from_url_to_file_field("media", media_type, instance.media_url)

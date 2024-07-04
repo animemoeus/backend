@@ -49,3 +49,7 @@ class InstagramAPI:
 
 def user_profile_picture_upload_location(instance, filename):
     return f"instagram/user/{instance.username}/profile-picture/{filename}"
+
+
+def user_stories_upload_location(instance, filename):
+    return f"instagram/user/{instance.user.username}/stories/{filename}"

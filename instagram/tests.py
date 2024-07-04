@@ -93,3 +93,5 @@ class TestInstagramUserStory(TestCase):
             self.assertIsNotNone(story.thumbnail_url, "The thumbnail_url should not be None")
             self.assertIsNotNone(story.media_url, "The media_url should not be None")
             self.assertIsNotNone(story.story_created_at, "The story_created_at should not be None")
+            self.assertIsNotNone(story.thumbnail, "The thumbnail should not be None")
+            self.assertIsNotNone(story.media, "The media should not be None")
