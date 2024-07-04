@@ -110,10 +110,10 @@ class User(models.Model):
 
     def update_user_stories(self) -> tuple[list, list]:
         stories = self.get_user_stories()
-        if not stories:
-            return stories
-
         saved_stories = []
+        if not stories:
+            return stories, saved_stories
+
         for story in stories:
             if Story.objects.filter(story_id=story["story_id"]).exists():
                 continue
