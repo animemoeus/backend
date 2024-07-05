@@ -22,7 +22,7 @@ class User(models.Model):
     follower_count = models.PositiveIntegerField(default=0)
     following_count = models.PositiveIntegerField(default=0)
 
-    api_updated_time = models.DateTimeField(verbose_name="API Updated Time", blank=True, null=True)
+    updated_from_api_datetime = models.DateTimeField(verbose_name="Update from API datetime", blank=True, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
