@@ -12,7 +12,8 @@ from .utils import InstagramAPI, user_profile_picture_upload_location, user_stor
 
 
 class User(models.Model):
-    username = models.CharField(max_length=150, primary_key=True)
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    username = models.CharField(max_length=150)
     full_name = models.CharField(max_length=150, blank=True)
     profile_picture = models.FileField(upload_to=user_profile_picture_upload_location, blank=True, null=True)
     profile_picture_url = models.URLField(max_length=500)
