@@ -183,9 +183,11 @@ class Instaloader(models.Model):
 
     def test_login(self) -> bool:
         self.instaloader = instaloader.Instaloader()
-        self.instaloader.load_session_from_file(username=self.user.username, filename=self.session_file.path)
-        login = self.instaloader.test_login()
 
+        with self.session_file.file as session_file:
+            self.instaloader.context.load_session_from_file(self.user.username, session_file)
+
+        login = self.instaloader.test_login()
         if login:
             self.is_login_success = True
         else:
