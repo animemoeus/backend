@@ -70,6 +70,7 @@ class InstaloaderAdmin(admin.ModelAdmin):
     readonly_fields = ("created_at", "updated_at", "last_login_datetime", "is_login_success")
     search_fields = ("user__username", "user__full_name")
     ordering = ("-user__username",)
+    autocomplete_fields = ("user",)
 
     fieldsets = (
         (None, {"fields": ("user",)}),
