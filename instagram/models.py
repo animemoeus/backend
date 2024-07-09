@@ -193,16 +193,16 @@ class Instaloader(models.Model):
         with self.session_file.file as session_file:
             self.instaloader.context.load_session_from_file(self.user.username, session_file)
 
-        login = self.instaloader.test_login()
-        if login:
+        try:
+            self.instaloader.get_explore_posts()
             self.is_login_success = True
-        else:
+        except instaloader.LoginRequiredException:
             self.is_login_success = False
 
         self.last_login_datetime = timezone.now()
         self.save()
 
-        return bool(login)
+        return self.is_login_success
 
     # def get_profile_info(self, username: str):
     #     if not username:
