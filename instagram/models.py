@@ -1,5 +1,6 @@
 import uuid
 
+import instaloader
 import requests
 from django.core.files.base import ContentFile
 from django.db import models
@@ -164,6 +165,56 @@ class Story(models.Model):
 
         if hasattr(self, field_name):
             getattr(self, field_name).save(f"{uuid.uuid4()}.{file_format}", ContentFile(response.content))
+
+
+class Instaloader(models.Model):
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    session_file = models.FileField(upload_to="instagram/instaloader/sessions/")
+
+    is_login_success = models.BooleanField(default=False)
+    last_login_datetime = models.DateTimeField(blank=True, null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user.username}"
+
+    def test_login(self) -> bool:
+        self.instaloader = instaloader.Instaloader()
+        self.instaloader.load_session_from_file(username=self.user.username, filename=self.session_file.path)
+        login = self.instaloader.test_login()
+
+        if login:
+            self.is_login_success = True
+        else:
+            self.is_login_success = False
+
+        self.last_login_datetime = timezone.now()
+        self.save()
+
+        return bool(login)
+
+    # def get_profile_info(self, username: str):
+    #     if not username:
+    #         return
+    #     if not self.test_login():
+    #         return
+
+    #     profile = instaloader.Profile.from_username(self.instaloader.context, username)
+    #     return profile
+
+    #     self.instaloader.load_session_from_file(username=self.user.username, filename=self.session_file.path)
+
+    # def get_stories(self):
+    #     if not self.test_login():
+    #         return
+
+    #     for story in self.instaloader.get_stories():
+    #         print(story.url)
+    #         print(story.video_url)
+    #         break
 
 
 @receiver(post_save, sender=Story)
