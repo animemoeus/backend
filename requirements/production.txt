@@ -4,8 +4,8 @@
 
 gunicorn==22.0.0  # https://github.com/benoitc/gunicorn
 psycopg[c]==3.2.1  # https://github.com/psycopg/psycopg
-sentry-sdk==2.8.0  # https://github.com/getsentry/sentry-python
+sentry-sdk==2.10.0  # https://github.com/getsentry/sentry-python
 
 # Django
 # ------------------------------------------------------------------------------
-django-anymail==11.0  # https://github.com/anymail/django-anymail
+django-anymail==11.0.1  # https://github.com/anymail/django-anymail
