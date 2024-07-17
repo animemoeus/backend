@@ -21,10 +21,13 @@ from .utils import (
 class User(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
+    instagram_id = models.CharField(max_length=50, unique=True, blank=True, null=True)
     username = models.CharField(max_length=150, unique=True)
     full_name = models.CharField(max_length=150, blank=True)
+
     profile_picture = models.FileField(upload_to=user_profile_picture_upload_location, blank=True, null=True)
-    profile_picture_url = models.URLField(max_length=500)
+    profile_picture_url = models.URLField(max_length=500, help_text="The original profile picture URL from Instagram")
+
     biography = models.TextField(blank=True)
     follower_count = models.PositiveIntegerField(default=0)
     following_count = models.PositiveIntegerField(default=0)

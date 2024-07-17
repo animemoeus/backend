@@ -19,6 +19,7 @@ class UserAdmin(admin.ModelAdmin):
         "following_count",
     )
     readonly_fields = (
+        "instagram_id",
         "full_name",
         "biography",
         "profile_picture_url",
