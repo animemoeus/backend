@@ -3,7 +3,7 @@ Pillow==10.4.0  # https://github.com/python-pillow/Pillow
 argon2-cffi==23.1.0  # https://github.com/hynek/argon2_cffi
 whitenoise==6.7.0  # https://github.com/evansd/whitenoise
 redis==5.0.7  # https://github.com/redis/redis-py
-hiredis==2.3.2  # https://github.com/redis/hiredis-py
+hiredis==3.0.0  # https://github.com/redis/hiredis-py
 celery==5.4.0  # pyup: < 6.0  # https://github.com/celery/celery
 django-celery-beat==2.6.0  # https://github.com/celery/django-celery-beat
 flower==2.0.1  # https://github.com/mher/flower
@@ -28,7 +28,7 @@ django-import-export==4.1.1  # https://github.com/django-import-export/django-im
 django-hosts==6.0  # https://github.com/jazzband/django-hosts
 # Storage
 django-storages==1.14.4 # https://github.com/jschneier/django-storages/
-boto3==1.34.145 # https://github.com/boto/boto3
+boto3==1.34.146 # https://github.com/boto/boto3
 
 # discord
 django-ninja==1.2.2 # https://github.com/vitalik/django-ninja
