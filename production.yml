@@ -4,6 +4,7 @@ volumes:
   production_postgres_data: {}
   production_postgres_data_backups: {}
   production_django_media: {}
+  etc_wireguard:
 
 services:
   django: &django
@@ -70,3 +71,24 @@ services:
     image: amir20/dozzle:latest
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+
+  wireguard:
+    environment:
+      - WG_HOST=${WIREGUARD_HOST}
+      - PASSWORD=${WIREGUARD_PASSWORD}
+      - WG_DEFAULT_ADDRESS=10.7.0.x
+      - UI_TRAFFIC_STATS=true
+      - UI_CHART_TYPE=2
+    image: ghcr.io/wg-easy/wg-easy
+    container_name: wireguard
+    volumes:
+      - etc_wireguard:/etc/wireguard
+    ports:
+      - "51820:51820/udp"
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    sysctls:
+      - net.ipv4.ip_forward=1
+      - net.ipv4.conf.all.src_valid_mark=1
