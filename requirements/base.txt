@@ -28,7 +28,7 @@ django-import-export==4.1.1  # https://github.com/django-import-export/django-im
 django-hosts==6.0  # https://github.com/jazzband/django-hosts
 # Storage
 django-storages==1.14.4 # https://github.com/jschneier/django-storages/
-boto3==1.34.146 # https://github.com/boto/boto3
+boto3==1.34.148 # https://github.com/boto/boto3
 
 # discord
 django-ninja==1.2.2 # https://github.com/vitalik/django-ninja
