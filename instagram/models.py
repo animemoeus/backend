@@ -1,4 +1,5 @@
 import uuid
+from typing import Self
 
 import instaloader
 import requests
@@ -40,26 +41,24 @@ class User(models.Model):
     def __str__(self):
         return f"{self.username}"
 
-    def get_information_from_api(self) -> tuple[int, dict]:
-        """
-        Get Instagram user information from the API
-
-        Returns:
-            tuple[int, dict]: A tuple containing the HTTP status code and the user information.
-        """
-
+    def get_information_from_api(self) -> dict:
         api_client = InstagramAPI()
-        status_code, user_info = api_client.get_user_info_v2(self.username)
 
-        if status_code != status.HTTP_200_OK:
-            return status_code, {}
+        if self.instagram_id:
+            user_info = api_client.get_user_info_by_id_v2(self.instagram_id)
+        else:
+            user_info = api_client.get_user_info_v2(self.username)
 
-        return status_code, user_info
+        if not user_info:
+            raise Exception("Cannot get user information from Instagram API")
 
-    def update_information_from_api(self) -> int:
-        status_code, user_info = self.get_information_from_api()
-        if status_code != status.HTTP_200_OK:
-            return status_code
+        return user_info
+
+    def update_information_from_api(self) -> Self:
+        user_info = self.get_information_from_api()
+
+        if "pk" in user_info:
+            self.instagram_id = user_info["pk"]
 
         if "full_name" in user_info:
             self.full_name = user_info["full_name"]
@@ -94,7 +93,7 @@ class User(models.Model):
         self.updated_from_api_datetime = timezone.now()
         self.save()
 
-        return status_code
+        return self
 
     def get_user_stories(self) -> list:
         api_client = InstagramAPI()
