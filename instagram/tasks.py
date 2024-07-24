@@ -1,6 +1,3 @@
-import random
-import time
-
 from celery import shared_task
 
 from .models import Instaloader
@@ -37,18 +34,15 @@ def update_user_profile(username: str):
 
 # Instaloader
 @shared_task
-def check_instaloader_users_session():
-    instaloader_users = Instaloader.objects.filter(is_login_success=True)
+def instaloader_check_users_session():
+    instaloader_user_list = Instaloader.objects.filter()
 
-    for _instaloader in instaloader_users:
-        check_instaloader_user_session.delay(_instaloader.user.username)
-        time.sleep(random.randint(0, 60))  # Experimental testing to handle Instagram rate limit
+    for instaloader in instaloader_user_list:
+        instaloader_check_user_session.delay(instaloader.user.username)
+        # time.sleep(random.randint(0, 60))  # Experimental testing to handle Instagram rate limit
 
 
 @shared_task()
-def check_instaloader_user_session(username: str):
+def instaloader_check_user_session(username: str):
     instaloader_user = Instaloader.objects.get(user__username=username)
     instaloader_user.test_login()
-
-
-# Instaloader

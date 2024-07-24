@@ -88,9 +88,9 @@ class InstaloaderAdmin(admin.ModelAdmin):
         return super().response_change(request, obj)
 
     def handle_test_login(self, request, obj: Instaloader):
-        login = obj.test_login()
-
-        if login:
+        try:
+            obj.test_login()
             self.message_user(request, "Login Success (˶ᵔ ᵕ ᵔ˶)")
-        else:
-            self.message_user(request, "Login Failed (╥﹏╥)", level=messages.ERROR)
+        except Exception as e:
+            self.message_user(request, "Login Failed (˚ ˃̣̣̥⌓˂̣̣̥ )", level=messages.ERROR)
+            self.message_user(request, e, level=messages.ERROR)
