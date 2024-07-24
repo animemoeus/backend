@@ -1,6 +1,5 @@
 from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
-from rest_framework import status
 
 from .models import Instaloader, Story, User
 
@@ -43,12 +42,12 @@ class UserAdmin(admin.ModelAdmin):
         return super().response_change(request, obj)
 
     def handle_update_information_from_api(self, request, obj: User):
-        code = obj.update_information_from_api()
-
-        if status.is_success(code):
-            self.message_user(request, f"({code}): Successfully get information from API")
-        else:
-            self.message_user(request, f"({code}): Failed to get information from API", level=messages.ERROR)
+        try:
+            obj.update_information_from_api()
+            self.message_user(request, "Successfully get information from API")
+        except Exception as e:
+            self.message_user(request, "Failed to get information from the API", level=messages.ERROR)
+            self.message_user(request, e, level=messages.ERROR)
 
     def handle_update_user_stories(self, request, obj: User):
         stories, saved_stories = obj.update_user_stories()
