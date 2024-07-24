@@ -60,6 +60,9 @@ class User(models.Model):
         if "pk" in user_info:
             self.instagram_id = user_info["pk"]
 
+        if "username" in user_info:
+            self.username = user_info["username"]
+
         if "full_name" in user_info:
             self.full_name = user_info["full_name"]
 
