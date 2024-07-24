@@ -190,42 +190,21 @@ class Instaloader(models.Model):
     def __str__(self):
         return f"{self.user.username}"
 
-    def test_login(self) -> bool:
+    def test_login(self) -> None:
         self.instaloader = instaloader.Instaloader()
 
         with self.session_file.file as session_file:
             self.instaloader.context.load_session_from_file(self.user.username, session_file)
 
         try:
-            self.instaloader.get_explore_posts()
+            self.instaloader.test_login()
             self.is_login_success = True
         except instaloader.LoginRequiredException:
             self.is_login_success = False
+            raise Exception("Test login failed. Please check your session file.")
 
         self.last_login_datetime = timezone.now()
         self.save()
-
-        return self.is_login_success
-
-    # def get_profile_info(self, username: str):
-    #     if not username:
-    #         return
-    #     if not self.test_login():
-    #         return
-
-    #     profile = instaloader.Profile.from_username(self.instaloader.context, username)
-    #     return profile
-
-    #     self.instaloader.load_session_from_file(username=self.user.username, filename=self.session_file.path)
-
-    # def get_stories(self):
-    #     if not self.test_login():
-    #         return
-
-    #     for story in self.instaloader.get_stories():
-    #         print(story.url)
-    #         print(story.video_url)
-    #         break
 
     def send_session_information_to_discord_channel(self, message: str) -> bool | None:
         if not message:
@@ -250,7 +229,7 @@ def story_post_save(sender, instance, **kwargs):
 
 
 @receiver(pre_save, sender=Instaloader)
-def track_field_changes(sender, instance, **kwargs):
+def instaloader_track_field_changes(sender, instance, **kwargs):
     if not instance.pk:
         return
 
