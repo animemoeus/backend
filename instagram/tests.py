@@ -12,6 +12,10 @@ class InstagramTestCase(TestCase):
     def test_get_information_from_api(self):
         user_1_info = self.user_1.get_information_from_api()
 
+        self.assertEqual(self.user_1.instagram_id, None, "Instagram user id should be empty")
+        self.user_1.update_information_from_api()
+        self.assertEqual(self.user_1.instagram_id, user_1_info.get("pk"), "Instagram user id should be available")
+
         self.assertEqual(user_1_info.get("username"), "arter_tendean", 'Username should be "arter_tendean"')
 
         self.user_1.update_information_from_api()
