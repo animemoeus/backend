@@ -90,6 +90,7 @@ class TelegramWebhookView(APIView):
 
         # Handle tweet link
         elif "https://x.com" in message.lower() or "https://twitter.com" in message.lower():
+            self.send_chat_action("typing")
             self.handle_tweet_link(telegram_user, message)
 
         # Handle other messages
