@@ -37,5 +37,7 @@ class TestValidateTelegramMiniAppData(TestCase):
         telegram_bot_token = settings.TWITTER_VIDEO_DOWNLOADER_BOT_TOKEN
         init_data = "query_id=AAHXv_03AAAAANe__TfVCFD_&user=%7B%22id%22%3A939376599%2C%22first_name%22%3A%22arterrr%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22artertendean%22%2C%22language_code%22%3A%22en%22%2C%22is_premium%22%3Atrue%2C%22allows_write_to_pm%22%3Atrue%7D&auth_date=1723083100&hash=83dae1980c08b7706c4f572eef937c10f885101eb1f56848203ba88e7cd708ecinvalid"
 
-        result = validate_telegram_mini_app_data(init_data, telegram_bot_token)
-        self.assertFalse(result)
+        with self.assertRaises(Exception) as cm:
+            validate_telegram_mini_app_data(init_data, telegram_bot_token)
+
+        self.assertIn("The given data hash is not valid!", str(cm.exception))
