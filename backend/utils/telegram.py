@@ -1,9 +1,18 @@
 import hashlib
 import hmac
 import json
+from typing import TypedDict
 from urllib.parse import unquote
 
 from django.http import HttpRequest
+
+
+class TelegramMiniAppData(TypedDict):
+    id: int
+    first_name: str
+    last_name: str
+    username: str
+    language_code: str
 
 
 class TelegramWebhookParser:
@@ -31,7 +40,9 @@ class TelegramWebhookParser:
         return {"user": user, "text_message": message}
 
 
-def validate_telegram_mini_app_data(query_string: str, bot_token: str, constant_str: str = "WebAppData") -> bool:
+def validate_telegram_mini_app_data(
+    query_string: str, bot_token: str, constant_str: str = "WebAppData"
+) -> TelegramMiniAppData:
     """
     Validates the data received from the Telegram web app, using the
     method documented here:
@@ -57,4 +68,18 @@ def validate_telegram_mini_app_data(query_string: str, bot_token: str, constant_
     calculated_hash = hmac.new(secret_key, data_string.encode(), hashlib.sha256).hexdigest()
 
     # Validate the received hash with the calculated hash
-    return calculated_hash == received_hash
+    if not calculated_hash == received_hash:
+        raise Exception(
+            f"The given data hash is not valid! Received hash: {received_hash}, Calculated hash: {calculated_hash}"
+        )
+
+    user_data = json.loads(parsed_data["user"])
+    data: TelegramMiniAppData = {
+        "id": int(user_data["id"]),
+        "first_name": user_data["first_name"],
+        "last_name": user_data["last_name"],
+        "username": user_data["username"],
+        "language_code": user_data["language_code"] or "en",
+    }
+
+    return data
