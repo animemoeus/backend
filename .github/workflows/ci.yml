@@ -50,6 +50,9 @@ jobs:
           echo "INSTAGRAM_API_KEY=${{ secrets.INSTAGRAM_API_KEY }}" >> .envs/.local/.django
           cat .envs/.local/.django
 
+          echo "TWITTER_VIDEO_DOWNLOADER_BOT_TOKEN=${{ secrets.TWITTER_VIDEO_DOWNLOADER_BOT_TOKEN }}" >> .envs/.local/.django
+          cat .envs/.local/.django
+
           echo "WIREGUARD_HOST=localhost" >> .env
           echo "WIREGUARD_PASSWORD=password" >> .env
           cat .env
