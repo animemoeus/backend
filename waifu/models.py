@@ -1,9 +1,7 @@
-import random
-
-import requests
 from django.conf import settings
+import requests
 from django.db import models
-
+import random
 from models.base import BaseTelegramUserModel
 
 
@@ -11,6 +9,7 @@ class Image(models.Model):
     image_id = models.CharField(max_length=50)
     original_image = models.CharField(max_length=500, blank=True)
     thumbnail = models.CharField(max_length=500, blank=True)
+    blurhash = models.CharField(max_length=500, blank=True)
 
     is_nsfw = models.BooleanField(default=False)
 
