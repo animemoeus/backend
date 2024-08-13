@@ -3,6 +3,8 @@ import re
 from django.shortcuts import render
 from django.views import View
 from django.views.decorators.clickjacking import xframe_options_exempt
+from rest_framework import status
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -11,6 +13,7 @@ from backend.utils.telegram import TelegramWebhookParser
 from .models import DownloadedTweet
 from .models import Settings as TwitterDownloaderSettings
 from .models import TelegramUser
+from .serializers import ValidateTelegramMiniAppDataSerializer
 from .utils import TwitterDownloader
 
 
@@ -132,3 +135,13 @@ class TelegramWebhookView(APIView):
         telegram_user.send_message(
             "Haha, I'm just a bot.\n\nI can't understand everything.\n\nTry sending a different command!"
         )
+
+
+class ValidateTelegramMiniAppDataView(GenericAPIView):
+    serializer_class = ValidateTelegramMiniAppDataSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        return Response(status=status.HTTP_200_OK)
