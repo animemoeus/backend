@@ -10,21 +10,6 @@
 
 ---
 
-<a href="https://idx.google.com/import?url=https%3A%2F%2Fgithub.com%2Fanimemoeus%2Fbackend">
-  <picture>
-    <source
-      media="(prefers-color-scheme: dark)"
-      srcset="https://cdn.idx.dev/btn/open_dark_32.svg">
-    <source
-      media="(prefers-color-scheme: light)"
-      srcset="https://cdn.idx.dev/btn/open_light_32.svg">
-    <img
-      height="32"
-      alt="Open in IDX"
-      src="https://cdn.idx.dev/btn/open_purple_32.svg">
-  </picture>
-</a>
-
 - [📈 Uptime Robot](https://stats.uptimerobot.com/GKy6liBGw7)
 - [🧑‍⚕️ Health Check](https://api.animemoe.us/health-check/)
 - [👀 Admin Panel](https://api.animemoe.us/admin/)
@@ -41,6 +26,12 @@
 [![Uptime Robot status](https://img.shields.io/uptimerobot/status/m797080158-bcfd7f8a26110828783eff90)](https://stats.uptimerobot.com/GKy6liBGw7/797080158) [![Uptime Robot ratio (7 days)](https://img.shields.io/uptimerobot/ratio/7/m797080158-bcfd7f8a26110828783eff90)](https://stats.uptimerobot.com/GKy6liBGw7/797080158) [![Uptime Robot ratio (30 days)](https://img.shields.io/uptimerobot/ratio/m797080158-bcfd7f8a26110828783eff90)](https://stats.uptimerobot.com/GKy6liBGw7/797080158)
 
 - [https://github.com/animemoeus/backend/wiki/Discord#endpoint](https://github.com/animemoeus/backend/wiki/Discord#refresh-expired-url)
+
+---
+
+## Twitter Downloader
+
+### Docs: https://docs.api.animemoe.us/twitter-downloader/twitter-video-downloader-bot
 
 ---
 
