@@ -137,6 +137,13 @@ class TelegramWebhookView(APIView):
         )
 
 
+class TelegramWebhookV2View(APIView):
+    def post(self, request):
+        telegram_webhook = TelegramWebhookParser(request.body)
+        print(telegram_webhook.get_user())
+        return Response("arter tendean")
+
+
 class ValidateTelegramMiniAppDataView(GenericAPIView):
     serializer_class = ValidateTelegramMiniAppDataSerializer
 

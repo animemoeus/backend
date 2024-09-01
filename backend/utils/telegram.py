@@ -5,6 +5,7 @@ from typing import TypedDict
 from urllib.parse import unquote
 
 from django.http import HttpRequest
+from pydantic import BaseModel
 
 
 class TelegramMiniAppData(TypedDict):
@@ -15,12 +16,19 @@ class TelegramMiniAppData(TypedDict):
     language_code: str
 
 
+class TelegramUserInfo(BaseModel):
+    first_name: str
+    last_name: str = ""
+    username: str = ""
+    id: int
+
+
 class TelegramWebhookParser:
     def __init__(self, request: HttpRequest):
         self.request = request
 
     @property
-    def data(self):
+    def data(self) -> dict | None:
         try:
             data = json.loads(self.request)
         except Exception:
@@ -35,9 +43,36 @@ class TelegramWebhookParser:
             return None
 
         user = data.get("message").get("from")
-        message = data.get("message").get("text") or ""
+        message = data.get("message").get("text", "")
 
         return {"user": user, "text_message": message}
+
+    def get_user(self) -> TelegramUserInfo:
+        required_keys = ["first_name", "id"]
+
+        try:
+            payload = json.loads(self.request)
+        except Exception as e:
+            raise Exception(str(e))
+
+        message = payload.get("message", None)
+        edited_message = payload.get("edited_message", None)
+
+        if not message and not edited_message:
+            raise Exception("Unable to find message and edited message data")
+
+        user_data = message.get("from") or edited_message.get("from")
+
+        for i in required_keys:
+            if not user_data.get(i):
+                raise Exception(f"{i} is required")
+
+        return {
+            "id": user_data.get("id"),
+            "first_name": user_data.get("first_name"),
+            "last_name": user_data.get("last_name", ""),
+            "username": user_data.get("username", ""),
+        }
 
 
 def validate_telegram_mini_app_data(
