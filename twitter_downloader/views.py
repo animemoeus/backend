@@ -140,7 +140,13 @@ class TelegramWebhookView(APIView):
 class TelegramWebhookV2View(APIView):
     def post(self, request):
         telegram_webhook = TelegramWebhookParser(request.body)
-        print(telegram_webhook.get_user())
+
+        try:
+            webhook_user = telegram_webhook.get_user()
+        except Exception as e:
+            return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+        print(webhook_user)
         return Response("arter tendean")
 
 

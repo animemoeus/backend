@@ -5,7 +5,6 @@ from typing import TypedDict
 from urllib.parse import unquote
 
 from django.http import HttpRequest
-from pydantic import BaseModel
 
 
 class TelegramMiniAppData(TypedDict):
@@ -16,11 +15,11 @@ class TelegramMiniAppData(TypedDict):
     language_code: str
 
 
-class TelegramUserInfo(BaseModel):
+class TelegramUserInfo(TypedDict):
+    id: int
     first_name: str
     last_name: str = ""
     username: str = ""
-    id: int
 
 
 class TelegramWebhookParser:
@@ -53,19 +52,19 @@ class TelegramWebhookParser:
         try:
             payload = json.loads(self.request)
         except Exception as e:
-            raise Exception(str(e))
+            raise Exception(e)
 
         message = payload.get("message", None)
         edited_message = payload.get("edited_message", None)
 
         if not message and not edited_message:
-            raise Exception("Unable to find message and edited message data")
+            raise Exception("Unable to find `message` and `edited_message` data")
 
         user_data = message.get("from") or edited_message.get("from")
 
         for i in required_keys:
             if not user_data.get(i):
-                raise Exception(f"{i} is required")
+                raise Exception(f"Unable to get the user information because `{i}` is missing")
 
         return {
             "id": user_data.get("id"),
