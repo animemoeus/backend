@@ -68,10 +68,6 @@ class TwitterDownloader:
 
 
 def get_tweet_url(text: str) -> str:
-    """
-    Extract all strings starting with "https"
-    """
-
     urls = re.findall(r"https://\S+", text.lower())
     url = urls[0] if urls else ""
 

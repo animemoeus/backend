@@ -144,9 +144,39 @@ class TelegramWebhookV2View(APIView):
         try:
             webhook_user = telegram_webhook.get_user()
         except Exception as e:
-            return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return self._response_with_message(
+                f"Oops! There was an error: {str(e)}. Please try again.", status.HTTP_400_BAD_REQUEST
+            )
 
         # Get or create Telegram User
+        telegram_user = self._get_or_create_telegram_user(webhook_user)
+        telegram_user.request_count += 1
+        telegram_user.save()
+
+        # Check for maintenance mode and return immediately if true
+        if self._is_maintenance_mode():
+            telegram_user.send_maintenance_message()
+            return self._response_with_message(
+                "Sorry! We're currently undergoing maintenance. Please check back later! 😝"
+            )
+
+        # Check if user is banned and return immediately if true
+        if self._is_user_banned(telegram_user):
+            telegram_user.send_banned_message()
+            return self._response_with_message(
+                "Uh-oh! Your account has been banned. Please contact support for assistance. ☠️"
+            )
+
+        # Handle text message if present
+        text_message = telegram_webhook.get_text_message()
+        if text_message:
+            self._handle_text_message(telegram_user, text_message)
+            return self._response_with_message(f"Got it! You've sent a text message: {text_message}")
+
+        return self._response_with_message("Hello from arter tendean! 😄")
+
+    def _get_or_create_telegram_user(self, webhook_user):
+        # Helper method to get or create a Telegram user
         telegram_user, _ = TelegramUser.objects.get_or_create(
             user_id=webhook_user.get("id"),
             defaults={
@@ -156,38 +186,33 @@ class TelegramWebhookV2View(APIView):
                 "is_active": True,
             },
         )
-        telegram_user.request_count += 1
-        telegram_user.save()
+        return telegram_user
 
-        # Handle maintenance mode
-        if TwitterDownloaderSettings.get_solo().is_maintenance:
-            telegram_user.send_maintenance_message()
-            return Response({"message": "Under maintenance 😝"})
+    def _is_maintenance_mode(self):
+        # Check if the system is in maintenance mode
+        return TwitterDownloaderSettings.get_solo().is_maintenance
 
-        # Handle banned user
-        if telegram_user.is_banned:
-            telegram_user.send_banned_message()
-            return Response({"message": "Your account is banned ☠️"})
+    def _is_user_banned(self, telegram_user):
+        # Check if the user is banned
+        return telegram_user.is_banned
 
-        if telegram_webhook.get_text_message():
-            text_message = telegram_webhook.get_text_message()
-            self.handle_text_message(telegram_user=telegram_user, message=text_message)
-
-            return Response({"message": f"Text message detected: `{text_message}`"})
-
-        return Response("arter tendean")
-
-    def handle_text_message(self, telegram_user: TelegramUser, message: str):
+    def _handle_text_message(self, telegram_user: TelegramUser, message: str):
         # Handle the text message that possibly contains tweet data
         if "https://x.com" in message.lower() or "https://twitter.com" in message.lower():
             tweet_url = get_tweet_url(message.lower())
-
             if not tweet_url:
-                telegram_user.send_message("Unable to extract the tweet url from the message")
-
-        # Unknown text message
+                telegram_user.send_message(
+                    "Hmm... I couldn't find a valid tweet URL in your message. Could you double-check it? 😊"
+                )
         else:
-            telegram_user.send_message("Unable to process the message")
+            # Unknown text message
+            telegram_user.send_message(
+                "I'm not quite sure how to process that message. Can you try sending something different? 🤔"
+            )
+
+    def _response_with_message(self, message, status=status.HTTP_200_OK):
+        # Helper method to create a Response with a message
+        return Response({"message": message}, status=status)
 
 
 class ValidateTelegramMiniAppDataView(GenericAPIView):
