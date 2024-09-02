@@ -1,4 +1,7 @@
 from django.test import TestCase
+from django.urls import reverse
+
+from twitter_downloader.models import DownloadedTweet, TelegramUser
 
 
 class TestValidateTelegramMiniAppData(TestCase):
@@ -19,3 +22,81 @@ class TestValidateTelegramMiniAppData(TestCase):
             "/twitter-downloader/telegram-webhook/validate-mini-app-data/", data, format="json"
         )
         self.assertEqual(response.status_code, 400, "Should return 400 Bad Request")
+
+
+class TestTelegramWebhookView(TestCase):
+    def setUp(self):
+        self.url = reverse("twitter-downloader:telegram-webhook")
+        self.text_message_payload = {
+            "update_id": 10000,
+            "message": {
+                "date": 1441645532,
+                "chat": {"last_name": "Tendean", "id": 939376599, "first_name": "Arter", "username": "artertendean"},
+                "message_id": 1365,
+                "from": {"last_name": "Tendean", "id": 939376599, "first_name": "Arter", "username": "artertendean"},
+                "text": "/start",
+            },
+        }
+
+        self.edited_text_message_payload = {
+            "update_id": 10000,
+            "edited_message": {
+                "date": 1441645532,
+                "chat": {"last_name": "Tendean", "id": 939376599, "first_name": "Arter", "username": "artertendean"},
+                "message_id": 1365,
+                "from": {"last_name": "Tendean", "id": 939376599, "first_name": "Arter", "username": "artertendean"},
+                "text": "/start",
+            },
+        }
+
+        self.text_message_with_tweet_payload = {
+            "update_id": 10000,
+            "message": {
+                "date": 1441645532,
+                "chat": {"last_name": "Tendean", "id": 939376599, "first_name": "Arter", "username": "artertendean"},
+                "message_id": 1365,
+                "from": {"last_name": "Tendean", "id": 939376599, "first_name": "Arter", "username": "artertendean"},
+                "text": "https://x.com/tyomateee/status/1274296339375853568",
+            },
+        }
+
+        self.text_message_with_nswf_tweet_payload = {
+            "update_id": 10000,
+            "message": {
+                "date": 1441645532,
+                "chat": {"last_name": "Tendean", "id": 939376599, "first_name": "Arter", "username": "artertendean"},
+                "message_id": 1365,
+                "from": {"last_name": "Tendean", "id": 939376599, "first_name": "Arter", "username": "artertendean"},
+                "text": "https://x.com/WarpsiwaAV/status/1829443959665443131?t=kZOlgjU0EJ-FAEol6Ij22Q&s=35",
+            },
+        }
+
+    def test_text_message(self):
+        self.assertEqual(TelegramUser.objects.all().count(), 0, "TelegramUser should be empty")
+
+        response = self.client.post(path=self.url, data=self.text_message_payload, content_type="application/json")
+        self.assertEqual(response.status_code, 200, "Response status code should be 200 (OK)")
+        self.assertEqual(TelegramUser.objects.all().count(), 1, "New TelegramUser should be created")
+
+        response = self.client.post(
+            path=self.url, data=self.edited_text_message_payload, content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 200, "Response status code should be 200 (OK)")
+        self.assertEqual(TelegramUser.objects.all().count(), 1, "New TelegramUser should not be created")
+
+    def test_text_message_with_tweet(self):
+        print(DownloadedTweet.objects.all().count())
+
+        response = self.client.post(
+            path=self.url, data=self.text_message_with_tweet_payload, content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 200, "Response status code should be 200 (OK)")
+        self.assertEqual(TelegramUser.objects.all().count(), 1, "New TelegramUser should be created")
+        self.assertEqual(DownloadedTweet.objects.all().count(), 1, "New DownloadedTweet should be created")
+
+        response = self.client.post(
+            path=self.url, data=self.text_message_with_nswf_tweet_payload, content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 200, "Response status code should be 200 (OK)")
+        self.assertEqual(TelegramUser.objects.all().count(), 1, "TelegramUser should be updated")
+        self.assertEqual(DownloadedTweet.objects.all().count(), 2, "New DownloadedTweet should be created")
