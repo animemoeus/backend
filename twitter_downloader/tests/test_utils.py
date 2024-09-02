@@ -23,7 +23,6 @@ class TestTwitterDownloader(TestCase):
 
     def test_download_nsfw_video(self):
         video_data = TwitterDownloader.get_video_data(self.tweet_url_2)
-
         self.assertIsNotNone(video_data)
         self.assertIsNotNone(video_data.get("id"), "Should contain ID")
         self.assertIsNotNone(video_data.get("thumbnail"), "Should contain thumbnail")
