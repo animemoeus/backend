@@ -73,6 +73,20 @@ class TelegramWebhookParser:
             "username": user_data.get("username", ""),
         }
 
+    def get_text_message(self) -> str:
+        try:
+            payload = json.loads(self.request)
+        except Exception as e:
+            raise Exception(e)
+
+        message = payload.get("message", None)
+
+        if not message:
+            raise Exception("Message is not available")
+
+        text = message.get("text")
+        return text
+
 
 def validate_telegram_mini_app_data(
     query_string: str, bot_token: str, constant_str: str = "WebAppData"

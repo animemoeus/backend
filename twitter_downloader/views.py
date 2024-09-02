@@ -14,7 +14,7 @@ from .models import DownloadedTweet
 from .models import Settings as TwitterDownloaderSettings
 from .models import TelegramUser
 from .serializers import ValidateTelegramMiniAppDataSerializer
-from .utils import TwitterDownloader
+from .utils import TwitterDownloader, get_tweet_url
 
 
 class SafelinkView(View):
@@ -146,8 +146,48 @@ class TelegramWebhookV2View(APIView):
         except Exception as e:
             return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-        print(webhook_user)
+        # Get or create Telegram User
+        telegram_user, _ = TelegramUser.objects.get_or_create(
+            user_id=webhook_user.get("id"),
+            defaults={
+                "first_name": webhook_user.get("first_name"),
+                "last_name": webhook_user.get("last_name"),
+                "username": webhook_user.get("username"),
+                "is_active": True,
+            },
+        )
+        telegram_user.request_count += 1
+        telegram_user.save()
+
+        # Handle maintenance mode
+        if TwitterDownloaderSettings.get_solo().is_maintenance:
+            telegram_user.send_maintenance_message()
+            return Response({"message": "Under maintenance 😝"})
+
+        # Handle banned user
+        if telegram_user.is_banned:
+            telegram_user.send_banned_message()
+            return Response({"message": "Your account is banned ☠️"})
+
+        if telegram_webhook.get_text_message():
+            text_message = telegram_webhook.get_text_message()
+            self.handle_text_message(telegram_user=telegram_user, message=text_message)
+
+            return Response({"message": f"Text message detected: `{text_message}`"})
+
         return Response("arter tendean")
+
+    def handle_text_message(self, telegram_user: TelegramUser, message: str):
+        # Handle the text message that possibly contains tweet data
+        if "https://x.com" in message.lower() or "https://twitter.com" in message.lower():
+            tweet_url = get_tweet_url(message.lower())
+
+            if not tweet_url:
+                telegram_user.send_message("Unable to extract the tweet url from the message")
+
+        # Unknown text message
+        else:
+            telegram_user.send_message("Unable to process the message")
 
 
 class ValidateTelegramMiniAppDataView(GenericAPIView):
