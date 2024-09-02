@@ -76,7 +76,7 @@ class TelegramWebhookView(APIView):
 
     @property
     def is_maintenance(self):
-        return TwitterDownloaderSettings.objects.get().is_maintenance
+        return TwitterDownloaderSettings.get_solo().is_maintenance
 
     def handle_text_message(self, telegram_user: TelegramUser, message: str):
         # Handle /start command

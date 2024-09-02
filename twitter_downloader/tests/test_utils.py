@@ -2,29 +2,34 @@ from django.conf import settings
 from django.test import TestCase
 
 from backend.utils.telegram import validate_telegram_mini_app_data
-
-# class TestTwitterDownloader(TestCase):
-#     def test_download_video(self):
-#         print("awokawok")
-#         # Mock response
-#         mock_response = {"status": "success", "video_url": "https://example.com/video.mp4"}
-
-#         with patch("twitter_downloader.utils.requests.get") as mock_get:
-#             mock_get.return_value.json.return_value = mock_response
-
-#             # Create an instance of TwitterDownloader
-#             downloader = TwitterDownloader(
-#                 "https://example.com/api", {"X-RapidAPI-Key": "key", "X-RapidAPI-Host": "host"}
-#             )
-
-#             # Call the download_video method
-#             result = downloader.download_video("https://twitter.com/user/status/123456789")
-
-#             # Assert the result
-#             self.assertEqual(result, mock_response)
+from twitter_downloader.utils import TwitterDownloader
 
 
-# Suggested code may be subject to a license. Learn more: ~LicenseLog:3939693502.
+class TestTwitterDownloader(TestCase):
+    def setUp(self):
+        self.tweet_url_1 = "https://x.com/tyomateee/status/1274296339375853568"
+        self.tweet_url_2 = (
+            "https://x.com/WarpsiwaAV/status/1829443959665443131?t=kZOlgjU0EJ-FAEol6Ij22Q&s=35"  # ☠️☠️☠️
+        )
+
+    def test_download_video(self):
+        video_data = TwitterDownloader.get_video_data(self.tweet_url_1)
+
+        self.assertIsNotNone(video_data)
+        self.assertIsNotNone(video_data.get("id"), "Should contain ID")
+        self.assertIsNotNone(video_data.get("thumbnail"), "Should contain thumbnail")
+        self.assertIsNotNone(video_data.get("description"), "Should contain description")
+        self.assertIsNotNone(video_data.get("videos"), "Should contain videos")
+
+    def test_download_nsfw_video(self):
+        video_data = TwitterDownloader.get_video_data(self.tweet_url_2)
+        self.assertIsNotNone(video_data)
+        self.assertIsNotNone(video_data.get("id"), "Should contain ID")
+        self.assertIsNotNone(video_data.get("thumbnail"), "Should contain thumbnail")
+        self.assertIsNotNone(video_data.get("description"), "Should contain description")
+        self.assertIsNotNone(video_data.get("videos"), "Should contain videos")
+
+
 class TestValidateTelegramMiniAppData(TestCase):
     def test_validate_mini_app_data_true(self):
         telegram_bot_token = settings.TWITTER_VIDEO_DOWNLOADER_BOT_TOKEN

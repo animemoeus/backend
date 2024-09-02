@@ -7,12 +7,12 @@ env:
 
 on:
   pull_request:
-    branches: ['master', 'main']
-    paths-ignore: ['docs/**']
+    branches: ["master", "main"]
+    paths-ignore: ["docs/**"]
 
   push:
-    branches: ['master', 'main']
-    paths-ignore: ['docs/**']
+    branches: ["master", "main"]
+    paths-ignore: ["docs/**"]
 
 concurrency:
   group: ${{ github.head_ref || github.run_id }}
@@ -28,7 +28,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
       # Consider using pre-commit.ci for open source project
       - name: Run pre-commit
         uses: pre-commit/action@v3.0.1
@@ -51,6 +51,10 @@ jobs:
           cat .envs/.local/.django
 
           echo "TWITTER_VIDEO_DOWNLOADER_BOT_TOKEN=${{ secrets.TWITTER_VIDEO_DOWNLOADER_BOT_TOKEN }}" >> .envs/.local/.django
+          echo "TWITTER_DOWNLOADER_API_URL=${{ secrets.TWITTER_DOWNLOADER_API_URL }}" >> .envs/.local/.django
+          echo "TWITTER_DOWNLOADER_KEY=${{ secrets.TWITTER_DOWNLOADER_KEY }}" >> .envs/.local/.django
+          echo "TWITTER_DOWNLOADER_HOST=${{ secrets.TWITTER_DOWNLOADER_HOST }}" >> .envs/.local/.django
+          echo "TWITTER_DOWNLOADER_COOKIE=${{ secrets.TWITTER_DOWNLOADER_COOKIE }}" >> .envs/.local/.django
           cat .envs/.local/.django
 
           echo "WIREGUARD_HOST=localhost" >> .env
