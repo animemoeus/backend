@@ -16,11 +16,11 @@ class TelegramUser(BaseTelegramUserModel):
     request_count = models.PositiveIntegerField(default=0)
 
     def send_maintenance_message(self):
-        message = "This bot is under maintenance, please try again later 😁👍"
+        message = "Oops! Under maintenance. Try again soon? 😁"
         self.send_message(message)
 
     def send_banned_message(self):
-        message = "Sorry, you are banned from using this bot.\n\nPlease /contact the bot owner for more information."
+        message = "Uh-oh, you're banned! Did you do something naughty? 😉"
         self.send_message(message)
 
     def send_photo(self, message):
