@@ -96,8 +96,8 @@ class TwitterDownloaderAPIV2:
 
         self.tweet_url = tweet_url
         self.tweet_data = self._get_tweet_data()
-        self.created_at = self.tweet_data.get("created_at")
         self.id = self.tweet_data.get("id")
+        self.created_at = self.tweet_data.get("created_at")
         self.description = self.tweet_data.get("description")
         self.data = self.tweet_data.get("data")
 
