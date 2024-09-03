@@ -15,13 +15,13 @@ class TelegramUser(BaseTelegramUserModel):
 
     request_count = models.PositiveIntegerField(default=0)
 
-    def send_maintenance_message(self):
+    def send_maintenance_message(self) -> bool:
         message = "Oops! Under maintenance. Try again soon? 😁"
-        self.send_message(message)
+        return self.send_message(message)
 
-    def send_banned_message(self):
+    def send_banned_message(self) -> bool:
         message = "Uh-oh, you're banned! Did you do something naughty? 😉"
-        self.send_message(message)
+        return self.send_message(message)
 
     def send_photo(self, message):
         self.send_chat_action("upload_photo")
