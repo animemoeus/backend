@@ -14,7 +14,7 @@ from .models import DownloadedTweet
 from .models import Settings as TwitterDownloaderSettings
 from .models import TelegramUser
 from .serializers import ValidateTelegramMiniAppDataSerializer
-from .utils import TwitterDownloader, get_tweet_url
+from .utils import TwitterDownloader, TwitterDownloaderAPIV2, get_tweet_url
 
 
 class SafelinkView(View):
@@ -204,6 +204,14 @@ class TelegramWebhookV2View(APIView):
                 telegram_user.send_message(
                     "Hmm... I couldn't find a valid tweet URL in your message. Could you double-check it? 😊"
                 )
+
+            try:
+                twitter_downloader = TwitterDownloaderAPIV2(tweet_url=tweet_url)
+            except Exception as e:
+                telegram_user.send_message(str(e))
+                return
+
+            print(twitter_downloader)
         else:
             # Unknown text message
             telegram_user.send_message(

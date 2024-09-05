@@ -42,7 +42,8 @@ class TelegramUser(BaseTelegramUserModel):
         )
         headers = {"Content-Type": "application/json"}
 
-        requests.request("POST", url, headers=headers, data=payload)
+        response = requests.request("POST", url, headers=headers, data=payload)
+        return response.ok
 
     def send_video(self, tweet_data):
         self.send_chat_action("upload_video")
@@ -77,8 +78,12 @@ class TelegramUser(BaseTelegramUserModel):
         headers = {"Content-Type": "application/json"}
 
         response = requests.request("POST", url, headers=headers, data=payload)
+
+        if response.ok:
+            return response.ok
+
         if response.status_code != 200:
-            self.send_photo(tweet_data)
+            return self.send_photo(tweet_data)
 
     def send_image_with_inline_keyboard(
         self,
@@ -108,7 +113,8 @@ class TelegramUser(BaseTelegramUserModel):
             }
         )
 
-        requests.request("POST", url, headers=headers, data=payload)
+        response = requests.request("POST", url, headers=headers, data=payload)
+        return response.ok
 
 
 class DownloadedTweet(models.Model):
