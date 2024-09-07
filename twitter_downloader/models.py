@@ -128,9 +128,11 @@ class DownloadedTweet(models.Model):
     def __str__(self):
         return self.tweet_url
 
-    def send_to_telegram_user(self):
+    def send_to_telegram_user(self) -> bool:
         url = f'https://api.animemoe.us{reverse("twitter-downloader:safelink")}?key={str(self.uuid)}'
-        self.telegram_user.send_image_with_inline_keyboard(self.tweet_data.get("thumbnail"), "Download", url)
+        result = self.telegram_user.send_image_with_inline_keyboard(self.tweet_data.get("thumbnail"), "Download", url)
+
+        return result
 
 
 class ExternalLink(models.Model):
@@ -163,7 +165,9 @@ class Settings(SingletonModel):
         self.set_webhook()
         super().save(*args, **kwargs)
 
-    def set_webhook(self):
+    def set_webhook(self) -> bool:
         if self.webhook_url:
             url = f"https://api.telegram.org/bot{settings.TWITTER_VIDEO_DOWNLOADER_BOT_TOKEN}/setWebhook?url={self.webhook_url}/"
-            requests.request("GET", url)
+            response = requests.request("GET", url)
+
+            return response.ok
