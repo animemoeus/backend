@@ -2,9 +2,7 @@ import json
 from typing import Literal
 
 import requests
-import tenacity
 from django.db import models
-from tenacity import stop_after_attempt, stop_after_delay
 
 
 class BaseTelegramUserModel(models.Model):
@@ -27,32 +25,25 @@ class BaseTelegramUserModel(models.Model):
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
-    @tenacity.retry(stop=(stop_after_delay(10) | stop_after_attempt(5)))
-    def send_chat_action(self, action: Literal["typing"]) -> bool:
+    def send_chat_action(self, action: Literal["typing"]) -> None:
         url = f"https://api.telegram.org/bot{self.BOT_TOKEN}/sendChatAction"
         payload = json.dumps({"chat_id": self.user_id, "action": action})
         headers = {"Content-Type": "application/json"}
 
-        response = requests.request("POST", url, headers=headers, data=payload)
-        return response.ok
+        requests.request("POST", url, headers=headers, data=payload)
 
-    @tenacity.retry(stop=(stop_after_delay(10) | stop_after_attempt(5)))
-    def send_message(self, message: str) -> bool:
+    def send_message(self, message: str):
         self.send_chat_action("typing")
 
         url = f"https://api.telegram.org/bot{self.BOT_TOKEN}/sendMessage"
         payload = json.dumps({"chat_id": self.user_id, "text": message})
         headers = {"Content-Type": "application/json"}
+        requests.request("POST", url, headers=headers, data=payload)
 
-        response = requests.request("POST", url, headers=headers, data=payload)
-        return response.ok
-
-    def send_document(self, document, caption="") -> bool:
+    def send_document(self, document, caption="") -> None:
         self.send_chat_action("upload_document")
 
         url = f"https://api.telegram.org/bot{self.BOT_TOKEN}/sendDocument"
         payload = json.dumps({"chat_id": self.user_id, "document": document, "caption": caption, "parse_mode": "HTML"})
         headers = {"Content-Type": "application/json"}
-
-        response = requests.request("POST", url, headers=headers, data=payload)
-        return response.ok
+        requests.request("POST", url, headers=headers, data=payload)
