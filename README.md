@@ -3,6 +3,7 @@
 [![Built with Cookiecutter Django](https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg?logo=cookiecutter)](https://github.com/cookiecutter/cookiecutter-django/)
 [![Black code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 [![Deployment](https://github.com/animemoeus/backend/actions/workflows/deployment.yml/badge.svg)](https://github.com/animemoeus/backend/actions/workflows/deployment.yml)
+[![codecov](https://codecov.io/gh/animemoeus/backend/graph/badge.svg?token=8UHQY5ZZSE)](https://codecov.io/gh/animemoeus/backend)
 [![Uptime Robot status](https://img.shields.io/uptimerobot/status/m788586431-1256ae08e9b37721503fdef8)](https://stats.uptimerobot.com/GKy6liBGw7/788586431)
 [![Uptime Robot ratio (7 days)](https://img.shields.io/uptimerobot/ratio/7/m788586431-1256ae08e9b37721503fdef8)](https://stats.uptimerobot.com/GKy6liBGw7/788586431)
 [![Uptime Robot ratio (30 days)](https://img.shields.io/uptimerobot/ratio/m788586431-1256ae08e9b37721503fdef8)](https://stats.uptimerobot.com/GKy6liBGw7/788586431)
