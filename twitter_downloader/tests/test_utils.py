@@ -2,7 +2,7 @@ from django.conf import settings
 from django.test import TestCase
 
 from backend.utils.telegram import validate_telegram_mini_app_data
-from twitter_downloader.utils import TwitterDownloader
+from twitter_downloader.utils import TwitterDownloader, TwitterDownloaderAPIV2
 
 
 class TestTwitterDownloader(TestCase):
@@ -28,6 +28,30 @@ class TestTwitterDownloader(TestCase):
         self.assertIsNotNone(video_data.get("thumbnail"), "Should contain thumbnail")
         self.assertIsNotNone(video_data.get("description"), "Should contain description")
         self.assertIsNotNone(video_data.get("videos"), "Should contain videos")
+
+
+class TestTwitterDownloaderAPIV2(TestCase):
+    def setUp(self):
+        self.tweet_url_1 = "https://x.com/tyomateee/status/1274296339375853568"
+        self.tweet_url_2 = (
+            "https://x.com/WarpsiwaAV/status/1829443959665443131?t=kZOlgjU0EJ-FAEol6Ij22Q&s=35"  # ☠️☠️☠️
+        )
+
+    def test_get_tweet_data(self):
+        twitter_downloader = TwitterDownloaderAPIV2(self.tweet_url_1)
+
+        self.assertIsNotNone(twitter_downloader)
+        self.assertIsNotNone(twitter_downloader.id, "Should contain ID")
+        self.assertIsNotNone(twitter_downloader.description, "Should contain description")
+        self.assertIsNotNone(twitter_downloader.data, "Should contain data")
+
+    def test_get_nsfw_tweet_data(self):
+        twitter_downloader = TwitterDownloaderAPIV2(self.tweet_url_2)
+
+        self.assertIsNotNone(twitter_downloader)
+        self.assertIsNotNone(twitter_downloader.id, "Should contain ID")
+        self.assertIsNotNone(twitter_downloader.description, "Should contain description")
+        self.assertIsNotNone(twitter_downloader.data, "Should contain data")
 
 
 class TestValidateTelegramMiniAppData(TestCase):

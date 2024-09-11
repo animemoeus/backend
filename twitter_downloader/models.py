@@ -15,13 +15,13 @@ class TelegramUser(BaseTelegramUserModel):
 
     request_count = models.PositiveIntegerField(default=0)
 
-    def send_maintenance_message(self):
-        message = "Hello, since the revenue from ads is too low (coz there is no one clicking the ads), I have to shut down this bot to improve the server cost efficiency. \n\nThanks for using this bot ✌️"
-        self.send_message(message)
+    def send_maintenance_message(self) -> bool:
+        message = "Oops! Under maintenance. Try again soon? 😁"
+        return self.send_message(message)
 
-    def send_banned_message(self):
-        message = "Sorry, you are banned from using this bot.\n\nPlease contact the bot owner for more information."
-        self.send_message(message)
+    def send_banned_message(self) -> bool:
+        message = "Uh-oh, you're banned! Did you do something naughty? 😉"
+        return self.send_message(message)
 
     def send_photo(self, message):
         self.send_chat_action("upload_photo")
@@ -42,7 +42,8 @@ class TelegramUser(BaseTelegramUserModel):
         )
         headers = {"Content-Type": "application/json"}
 
-        requests.request("POST", url, headers=headers, data=payload)
+        response = requests.request("POST", url, headers=headers, data=payload)
+        return response.ok
 
     def send_video(self, tweet_data):
         self.send_chat_action("upload_video")
@@ -77,8 +78,12 @@ class TelegramUser(BaseTelegramUserModel):
         headers = {"Content-Type": "application/json"}
 
         response = requests.request("POST", url, headers=headers, data=payload)
+
+        if response.ok:
+            return response.ok
+
         if response.status_code != 200:
-            self.send_photo(tweet_data)
+            return self.send_photo(tweet_data)
 
     def send_image_with_inline_keyboard(
         self,
@@ -108,7 +113,8 @@ class TelegramUser(BaseTelegramUserModel):
             }
         )
 
-        requests.request("POST", url, headers=headers, data=payload)
+        response = requests.request("POST", url, headers=headers, data=payload)
+        return response.ok
 
 
 class DownloadedTweet(models.Model):
@@ -122,9 +128,11 @@ class DownloadedTweet(models.Model):
     def __str__(self):
         return self.tweet_url
 
-    def send_to_telegram_user(self):
+    def send_to_telegram_user(self) -> bool:
         url = f'https://api.animemoe.us{reverse("twitter-downloader:safelink")}?key={str(self.uuid)}'
-        self.telegram_user.send_image_with_inline_keyboard(self.tweet_data.get("thumbnail"), "Download", url)
+        result = self.telegram_user.send_image_with_inline_keyboard(self.tweet_data.get("thumbnail"), "Download", url)
+
+        return result
 
 
 class ExternalLink(models.Model):
@@ -157,7 +165,9 @@ class Settings(SingletonModel):
         self.set_webhook()
         super().save(*args, **kwargs)
 
-    def set_webhook(self):
+    def set_webhook(self) -> bool:
         if self.webhook_url:
             url = f"https://api.telegram.org/bot{settings.TWITTER_VIDEO_DOWNLOADER_BOT_TOKEN}/setWebhook?url={self.webhook_url}/"
-            requests.request("GET", url)
+            response = requests.request("GET", url)
+
+            return response.ok
