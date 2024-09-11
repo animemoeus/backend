@@ -70,5 +70,14 @@ jobs:
       - name: Run Django Tests
         run: docker compose -f local.yml run django pytest
 
+      - name: Run Coverage
+        run: docker compose -f local.yml run django pytest --cov --junitxml=junit.xml -o junit_family=legacy
+
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
       - name: Tear down the Stack
         run: docker compose -f local.yml down
