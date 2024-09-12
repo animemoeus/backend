@@ -15,7 +15,7 @@ class TelegramMiniAppData(TypedDict):
     language_code: str
 
 
-class TelegramUserInfo(TypedDict):
+class TelegramUser(TypedDict):
     id: int
     first_name: str
     last_name: str = ""
@@ -23,13 +23,13 @@ class TelegramUserInfo(TypedDict):
 
 
 class TelegramWebhookParser:
-    def __init__(self, request: HttpRequest):
-        self.request = request
+    def __init__(self, request_data: HttpRequest):
+        self.request_data = request_data
 
     @property
     def data(self) -> dict | None:
         try:
-            data = json.loads(self.request)
+            data = json.loads(self.request_data)
         except Exception:
             return None
 
@@ -46,25 +46,25 @@ class TelegramWebhookParser:
 
         return {"user": user, "text_message": message}
 
-    def get_user(self) -> TelegramUserInfo:
+    def get_user(self) -> TelegramUser:
         required_keys = ["first_name", "id"]
 
         try:
-            payload = json.loads(self.request)
-        except Exception as e:
-            raise Exception(e)
+            payload = json.loads(self.request_data)
+        except Exception:
+            raise Exception("Failed to parse JSON payload ☠️")
 
         message = payload.get("message", None)
         edited_message = payload.get("edited_message", None)
 
         if not message and not edited_message:
-            raise Exception("Unable to find `message` and `edited_message` data")
+            raise Exception("Unable to find `message` and `edited_message` data 😿")
 
         user_data = message.get("from") or edited_message.get("from")
 
-        for i in required_keys:
-            if not user_data.get(i):
-                raise Exception(f"Unable to get the user information because `{i}` is missing")
+        for key in required_keys:
+            if not user_data.get(key):
+                raise Exception(f"Unable to get the user information because `{key}` is missing 😾")
 
         return {
             "id": user_data.get("id"),
@@ -75,14 +75,14 @@ class TelegramWebhookParser:
 
     def get_text_message(self) -> str:
         try:
-            payload = json.loads(self.request)
-        except Exception as e:
-            raise Exception(e)
+            payload = json.loads(self.request_data)
+        except Exception:
+            raise Exception("Failed to parse JSON payload ☠️")
 
         message = payload.get("message", None)
 
         if not message:
-            raise Exception("Message is not available")
+            raise Exception("Message is not available 😿")
 
         text = message.get("text")
         return text
