@@ -161,7 +161,7 @@ class TelegramWebhookV2View(APIView):
             )
 
         # Check if user is banned and return immediately if true
-        if self._is_user_banned(telegram_user):
+        if telegram_user.is_banned:
             telegram_user.send_banned_message()
             return self._response_with_message(
                 "Uh-oh! Your account has been banned. Please contact support for assistance. ☠️"
@@ -169,13 +169,16 @@ class TelegramWebhookV2View(APIView):
 
         # Handle text message if present
         text_message = telegram_webhook.get_text_message()
+
         if text_message:
             self._handle_text_message(telegram_user, text_message)
             return self._response_with_message(f"Got it! You've sent a text message: {text_message}")
+        else:
+            telegram_user.send_message("Hmmm 🤔")
 
         return self._response_with_message("Hello from arter tendean! 😄")
 
-    def _get_or_create_telegram_user(self, webhook_user):
+    def _get_or_create_telegram_user(self, webhook_user) -> TelegramUser:
         # Helper method to get or create a Telegram user
         telegram_user, _ = TelegramUser.objects.get_or_create(
             user_id=webhook_user.get("id"),
@@ -188,17 +191,18 @@ class TelegramWebhookV2View(APIView):
         )
         return telegram_user
 
-    def _is_maintenance_mode(self):
+    def _is_maintenance_mode(self) -> bool:
         # Check if the system is in maintenance mode
         return TwitterDownloaderSettings.get_solo().is_maintenance
 
-    def _is_user_banned(self, telegram_user):
-        # Check if the user is banned
-        return telegram_user.is_banned
-
     def _handle_text_message(self, telegram_user: TelegramUser, message: str):
+        if message.startswith("/start"):
+            message = f"Hey <b>{telegram_user.first_name}</b>!\n\nWelcome to the <b>Twitter Video Downloader Bot</b>! 🎥📥\n\nI'm here to help you download videos from Twitter easily and quickly! 😄\n\n✨ Just send me a link to a Twitter video, and I’ll handle the rest! ✨"
+
+            telegram_user.send_message(message)
+
         # Handle the text message that possibly contains tweet data
-        if "https://x.com" in message.lower() or "https://twitter.com" in message.lower():
+        elif "https://x.com" in message.lower() or "https://twitter.com" in message.lower():
             tweet_url = get_tweet_url(message.lower())
             if not tweet_url:
                 telegram_user.send_message(
@@ -212,6 +216,7 @@ class TelegramWebhookV2View(APIView):
                 return
 
             print(twitter_downloader)
+
         else:
             # Unknown text message
             telegram_user.send_message(
