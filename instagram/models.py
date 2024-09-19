@@ -1,22 +1,15 @@
 import uuid
 from typing import Self
 
-import instaloader
 import requests
-from django.conf import settings
 from django.core.files.base import ContentFile
 from django.db import models
-from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
 from rest_framework import status
 
-from .utils import (
-    InstagramAPI,
-    send_notification_to_discord_server,
-    user_profile_picture_upload_location,
-    user_stories_upload_location,
-)
+from .utils import InstagramAPI, user_profile_picture_upload_location, user_stories_upload_location
 
 
 class User(models.Model):
@@ -178,46 +171,6 @@ class Story(models.Model):
             getattr(self, field_name).save(f"{uuid.uuid4()}.{file_format}", ContentFile(response.content))
 
 
-class Instaloader(models.Model):
-    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    session_file = models.FileField(upload_to="instagram/instaloader/sessions/")
-
-    is_login_success = models.BooleanField(default=False)
-    last_login_datetime = models.DateTimeField(blank=True, null=True)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return f"{self.user.username}"
-
-    def test_login(self) -> None:
-        self.instaloader = instaloader.Instaloader()
-
-        with self.session_file.file as session_file:
-            self.instaloader.context.load_session_from_file(self.user.username, session_file)
-
-        try:
-            self.instaloader.test_login()
-            self.is_login_success = True
-        except instaloader.LoginRequiredException:
-            self.is_login_success = False
-            raise Exception("Test login failed. Please check your session file.")
-
-        self.last_login_datetime = timezone.now()
-        self.save()
-
-    def send_session_information_to_discord_channel(self, message: str) -> bool | None:
-        if not message:
-            return
-
-        webhook_url = settings.INSTALOADER_SESSION_DISCORD_CHANNEL_WEBHOOK_URL
-        status = send_notification_to_discord_server(webhook_url, message)
-
-        return status
-
-
 @receiver(post_save, sender=Story)
 def story_post_save(sender, instance, **kwargs):
     # Check if the thumbnail is empty and update the file field
@@ -228,17 +181,3 @@ def story_post_save(sender, instance, **kwargs):
     if not instance.media and instance.media_url:
         media_type = instance.media_url.split("?")[0].split(".")[-1]  # Should be jpg or mp4
         instance.save_from_url_to_file_field("media", media_type, instance.media_url)
-
-
-@receiver(pre_save, sender=Instaloader)
-def instaloader_track_field_changes(sender, instance, **kwargs):
-    if not instance.pk:
-        return
-
-    old_instance = sender.objects.get(pk=instance.pk)
-
-    # Handle session file change
-    if old_instance.is_login_success != instance.is_login_success:
-        instance.send_session_information_to_discord_channel(
-            f"The session of {instance.user.username} has been changed to {'valid' if instance.is_login_success else 'invalid'}."
-        )
