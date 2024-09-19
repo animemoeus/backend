@@ -18,5 +18,4 @@ class DiscordAPI:
         }
 
         response = requests.request("POST", settings.DISCORD_REFRESH_URL, headers=headers, data=payload)
-
         return response.json().get("refreshed_urls")[0].get("refreshed")
