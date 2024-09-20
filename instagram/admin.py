@@ -1,7 +1,7 @@
 from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
 
-from .models import Instaloader, Story, User
+from .models import Story, User
 
 
 @admin.register(User)
@@ -60,36 +60,3 @@ class StoryAdmin(admin.ModelAdmin):
     readonly_fields = ["story_id", "created_at", "story_created_at"]
     search_fields = ("user", "story_id")
     ordering = ("-story_created_at",)
-
-
-@admin.register(Instaloader)
-class InstaloaderAdmin(admin.ModelAdmin):
-    change_form_template = "instaloader/admin_edit_form.html"
-
-    list_display = ("user", "is_login_success", "last_login_datetime", "created_at", "updated_at")
-    readonly_fields = ("created_at", "updated_at", "last_login_datetime", "is_login_success")
-    search_fields = ("user__username", "user__full_name")
-    ordering = ("-user__username",)
-    autocomplete_fields = ("user",)
-
-    fieldsets = (
-        (None, {"fields": ("user",)}),
-        (None, {"fields": ("session_file",)}),
-        (None, {"fields": ("is_login_success", "last_login_datetime")}),
-        (None, {"fields": ("created_at", "updated_at")}),
-    )
-
-    def response_change(self, request, obj: User):
-        if "_test-login" in request.POST:
-            self.handle_test_login(request, obj)
-            return HttpResponseRedirect(".")
-
-        return super().response_change(request, obj)
-
-    def handle_test_login(self, request, obj: Instaloader):
-        try:
-            obj.test_login()
-            self.message_user(request, "Login Success (˶ᵔ ᵕ ᵔ˶)")
-        except Exception as e:
-            self.message_user(request, "Login Failed (˚ ˃̣̣̥⌓˂̣̣̥ )", level=messages.ERROR)
-            self.message_user(request, e, level=messages.ERROR)

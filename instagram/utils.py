@@ -56,13 +56,3 @@ def user_profile_picture_upload_location(instance, filename):
 
 def user_stories_upload_location(instance, filename):
     return f"instagram/user/{instance.user.username}/stories/{filename}"
-
-
-def send_notification_to_discord_server(webhook_url: str, message: str) -> bool:
-    if not webhook_url or not message:
-        return
-
-    payload = {"content": message}
-
-    response = requests.post(webhook_url, json=payload)
-    return response.ok

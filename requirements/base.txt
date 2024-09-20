@@ -7,13 +7,14 @@ hiredis==3.0.0  # https://github.com/redis/hiredis-py
 celery==5.4.0  # pyup: < 6.0  # https://github.com/celery/celery
 django-celery-beat==2.7.0  # https://github.com/celery/django-celery-beat
 flower==2.0.1  # https://github.com/mher/flower
+tenacity==9.0.0 # https://pypi.org/project/tenacity/
 
 # Django
 # ------------------------------------------------------------------------------
 django==4.2.14  # pyup: < 5.0  # https://www.djangoproject.com/
 django-environ==0.11.2  # https://github.com/joke2k/django-environ
 django-model-utils==4.5.1  # https://github.com/jazzband/django-model-utils
-django-allauth==64.1.0  # https://github.com/pennersr/django-allauth
+django-allauth==64.2.1  # https://github.com/pennersr/django-allauth
 django-crispy-forms==2.3  # https://github.com/django-crispy-forms/django-crispy-forms
 crispy-bootstrap5==2024.2  # https://github.com/django-crispy-forms/crispy-bootstrap5
 django-redis==5.4.0  # https://github.com/jazzband/django-redis
@@ -28,7 +29,7 @@ django-import-export==4.1.1  # https://github.com/django-import-export/django-im
 django-hosts==6.0  # https://github.com/jazzband/django-hosts
 # Storage
 django-storages==1.14.4 # https://github.com/jschneier/django-storages/
-boto3==1.35.13 # https://github.com/boto/boto3
+boto3==1.35.15 # https://github.com/boto/boto3
 
 # discord
 django-ninja==1.3.0 # https://github.com/vitalik/django-ninja
@@ -39,4 +40,3 @@ pixivpy3==3.7.5  # https://github.com/upbit/pixivpy
 pyscord-storage==2.0.3 # https://github.com/animemoeus/pyscord-storage
 django-health-check==3.18.3 # https://github.com/revsys/django-health-check
 saiyaku==2023.12.11 #  https://github.com/animemoeus/saiyaku
-instaloader==4.13 # https://github.com/instaloader/instaloader

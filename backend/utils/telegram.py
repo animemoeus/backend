@@ -15,14 +15,21 @@ class TelegramMiniAppData(TypedDict):
     language_code: str
 
 
+class TelegramUser(TypedDict):
+    id: int
+    first_name: str
+    last_name: str = ""
+    username: str = ""
+
+
 class TelegramWebhookParser:
-    def __init__(self, request: HttpRequest):
-        self.request = request
+    def __init__(self, request_data: HttpRequest):
+        self.request_data = request_data
 
     @property
-    def data(self):
+    def data(self) -> dict | None:
         try:
-            data = json.loads(self.request)
+            data = json.loads(self.request_data)
         except Exception:
             return None
 
@@ -35,9 +42,50 @@ class TelegramWebhookParser:
             return None
 
         user = data.get("message").get("from")
-        message = data.get("message").get("text") or ""
+        message = data.get("message").get("text", "")
 
         return {"user": user, "text_message": message}
+
+    def get_user(self) -> TelegramUser:
+        required_keys = ["first_name", "id"]
+
+        try:
+            payload = json.loads(self.request_data)
+        except Exception:
+            raise Exception("Failed to parse JSON payload ☠️")
+
+        message = payload.get("message", None)
+        edited_message = payload.get("edited_message", None)
+
+        if not message and not edited_message:
+            raise Exception("Unable to find `message` and `edited_message` data 😿")
+
+        user_data = message.get("from") or edited_message.get("from")
+
+        for key in required_keys:
+            if not user_data.get(key):
+                raise Exception(f"Unable to get the user information because `{key}` is missing 😾")
+
+        return {
+            "id": user_data.get("id"),
+            "first_name": user_data.get("first_name"),
+            "last_name": user_data.get("last_name", ""),
+            "username": user_data.get("username", ""),
+        }
+
+    def get_text_message(self) -> str:
+        try:
+            payload = json.loads(self.request_data)
+        except Exception:
+            raise Exception("Failed to parse JSON payload ☠️")
+
+        message = payload.get("message", None)
+
+        if not message:
+            raise Exception("Message is not available 😿")
+
+        text = message.get("text")
+        return text
 
 
 def validate_telegram_mini_app_data(
