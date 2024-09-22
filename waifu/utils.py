@@ -69,6 +69,9 @@ def refresh_serializer_data_urls(data: list[dict]) -> list[dict]:
         if "media.discordapp.net" in item.get("thumbnail", ""):
             urls.append(item.get("thumbnail"))
 
+    if not urls:
+        return data
+
     refreshed_urls = refresh_expired_urls(urls)
 
     for item in data:
