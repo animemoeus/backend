@@ -13,7 +13,7 @@ from backend.utils.telegram import TelegramWebhookParser
 from .models import Image, TelegramUser
 from .pagination import WaifuListPagination
 from .serializers import WaifuDetailSerializer, WaifuListSerialzer
-from .utils import PixivIllust, refresh_expired_urls, refresh_serializer_data_urls
+from .utils import PixivIllust, refresh_serializer_data_urls
 
 
 class WaifuListView(ListAPIView):
@@ -43,15 +43,10 @@ class WaifuListView(ListAPIView):
         queryset = self.filter_queryset(self.get_queryset())
 
         page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            serializer_data = refresh_serializer_data_urls(serializer.data)
-
-            return self.get_paginated_response(serializer_data)
-
-        serializer = self.get_serializer(queryset, many=True)
+        serializer = self.get_serializer(page, many=True)
         serializer_data = refresh_serializer_data_urls(serializer.data)
-        return Response(serializer_data)
+
+        return self.get_paginated_response(serializer_data)
 
 
 class WaifuDetailView(RetrieveAPIView):
