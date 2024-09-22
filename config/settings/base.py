@@ -166,7 +166,6 @@ MIDDLEWARE = [
 ROOT_HOSTCONF = "config.hosts"
 DEFAULT_HOST = "www"
 
-
 # STATIC
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#static-root
@@ -368,12 +367,10 @@ DISCORD_STORAGE_UPLOAD_FROM_FILE_WEBHOOK = env.str("DISCORD_STORAGE_UPLOAD_FROM_
 TIKTOK_MONITOR_TELEGRAM_BOT_SECRET = env.str("TIKTOK_MONITOR_TELEGRAM_BOT_SECRET", default="")
 TIKTOK_MONITOR_TELEGRAM_PRIVATE_CHANNEL_ID = env.str("TIKTOK_MONITOR_TELEGRAM_PRIVATE_CHANNEL_ID", default="")
 
-
 # Waifu
 PIXIVPY_3_REFRESH_TOKEN = env.str("PIXIVPY_3_REFRESH_TOKEN", default="")
 WAIFU_TELEGRAM_BOT_TOKEN = env.str("WAIFU_TELEGRAM_BOT_TOKEN", default="")
 WAIFU_DISCORD_REFRESH_URL_BOT_TOKEN = env.str("WAIFU_DISCORD_REFRESH_URL_BOT_TOKEN", default="")
-
 
 # twitter_video_downloader
 TWITTER_DOWNLOADER_API_URL = env.str("TWITTER_DOWNLOADER_API_URL", default="")
@@ -385,7 +382,6 @@ TWITTER_VIDEO_DOWNLOADER_BOT_TOKEN = env.str("TWITTER_VIDEO_DOWNLOADER_BOT_TOKEN
 # discord
 DISCORD_REFRESH_URL = env.str("DISCORD_REFRESH_URL", default="")
 DISCORD_REFRESH_URL_BOT_TOKEN = env.str("DISCORD_REFRESH_URL_BOT_TOKEN", default="")
-
 
 # instagram
 INSTAGRAM_API_URL = env.str("INSTAGRAM_API_URL", default="")
