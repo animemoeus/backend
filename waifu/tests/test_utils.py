@@ -1,6 +1,7 @@
+import requests
 from django.test import TestCase
 
-from waifu.utils import refresh_expired_urls
+from waifu.utils import refresh_expired_urls, refresh_serializer_data_urls
 
 
 class TestRefreshExpiredURLS(TestCase):
@@ -52,3 +53,43 @@ class TestRefreshExpiredURLS(TestCase):
     def test_refresh_expired_urls(self):
         refreshed_urls = refresh_expired_urls(self.expired_urls_1)
         self.assertEqual(len(refreshed_urls), 40)
+
+
+class TestRefreshSerializerDataURLS(TestCase):
+    def setUp(self):
+        self.serializer_data = [
+            {
+                "image_id": "1",
+                "original_image": "https://cdn.discordapp.com/attachments/858938620425404426/1275631907933261897/animemoeus-waifu.jpg",
+                "thumbnail": "https://media.discordapp.net/attachments/858938620425404426/1275631907933261897/animemoeus-waifu.jpg",
+            },
+            {
+                "image_id": "2",
+                "original_image": "https://cdn.discordapp.com/attachments/858938620425404426/1275631722272260148/animemoeus-waifu.jpg",
+                "thumbnail": "https://media.discordapp.net/attachments/858938620425404426/1275631722272260148/animemoeus-waifu.jpg",
+            },
+            {
+                "image_id": "3",
+                "original_image": "https://cdn.discordapp.com/attachments/858938620425404426/1275631652307075165/animemoeus-waifu.jpg",
+                "thumbnail": "https://media.discordapp.net/attachments/858938620425404426/1275631652307075165/animemoeus-waifu.jpg",
+            },
+            {
+                "image_id": "4",
+                "original_image": "https://cdn.discordapp.com/attachments/858938620425404426/1275631496677298217/animemoeus-waifu.jpg",
+                "thumbnail": "https://media.discordapp.net/attachments/858938620425404426/1275631496677298217/animemoeus-waifu.jpg",
+            },
+            {
+                "image_id": "5",
+                "original_image": "https://cdn.discordapp.com/attachments/858938620425404426/1275631492734783579/animemoeus-waifu.jpg",
+                "thumbnail": "https://media.discordapp.net/attachments/858938620425404426/1275631492734783579/animemoeus-waifu.jpg",
+            },
+        ]
+
+    def test_refresh_serializer_data_urls(self):
+        request = requests.get(self.serializer_data[0].get("original_image"), timeout=5)
+        self.assertEqual(request.status_code, 404, "Should return 404 Not Found")
+
+        refreshed_serializer_data = refresh_serializer_data_urls(self.serializer_data)
+
+        request = requests.get(refreshed_serializer_data[0].get("original_image"), timeout=5)
+        self.assertEqual(request.status_code, 200, "Should return 200 OK")
