@@ -59,3 +59,17 @@ class TestWaifuDetailView(TestCase):
         data = response.json()
         response = requests.get(data.get("original_image"))
         self.assertEqual(response.status_code, 200, "Should return 200 OK")
+
+
+class TestRandomWaifuView(TestCase):
+    def setUp(self):
+        create_waifu_init_data()
+
+    def test_get_random_waifu(self):
+        self.assertEqual(Image.objects.all().count(), 2)
+        response = self.client.get(reverse("waifu:random"))
+        self.assertEqual(response.status_code, 200, "Should return 200 OK")
+
+        data = response.json()
+        response = requests.get(data.get("original_image"))
+        self.assertEqual(response.status_code, 200, "Should return 200 OK")
