@@ -7,12 +7,12 @@ env:
 
 on:
   pull_request:
-    branches: ["master", "main"]
-    paths-ignore: ["docs/**"]
+    branches: [ "master", "main" ]
+    paths-ignore: [ "docs/**" ]
 
   push:
-    branches: ["master", "main"]
-    paths-ignore: ["docs/**"]
+    branches: [ "master", "main" ]
+    paths-ignore: [ "docs/**" ]
 
 concurrency:
   group: ${{ github.head_ref || github.run_id }}
@@ -55,6 +55,9 @@ jobs:
           echo "TWITTER_DOWNLOADER_KEY=${{ secrets.TWITTER_DOWNLOADER_KEY }}" >> .envs/.local/.django
           echo "TWITTER_DOWNLOADER_HOST=${{ secrets.TWITTER_DOWNLOADER_HOST }}" >> .envs/.local/.django
           echo "TWITTER_DOWNLOADER_COOKIE=${{ secrets.TWITTER_DOWNLOADER_COOKIE }}" >> .envs/.local/.django
+          cat .envs/.local/.django
+
+          echo "WAIFU_DISCORD_REFRESH_URL_BOT_TOKEN=${{ secrets.WAIFU_DISCORD_REFRESH_URL_BOT_TOKEN }}" >> .envs/.local/.django
           cat .envs/.local/.django
 
           echo "WIREGUARD_HOST=localhost" >> .env
