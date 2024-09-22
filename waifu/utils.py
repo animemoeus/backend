@@ -63,8 +63,6 @@ def refresh_serializer_data_urls(data: list[dict]) -> list[dict]:
     """
     urls = []
 
-    # print("data", data)
-
     for item in data:
         if "cdn.discordapp.com" in item.get("original_image", ""):
             urls.append(item.get("original_image"))

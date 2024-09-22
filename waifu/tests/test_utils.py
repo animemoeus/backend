@@ -52,7 +52,7 @@ class TestRefreshExpiredURLS(TestCase):
 
     def test_refresh_expired_urls(self):
         refreshed_urls = refresh_expired_urls(self.expired_urls_1)
-        self.assertEqual(len(refreshed_urls), 40)
+        self.assertEqual(len(refreshed_urls), 40, "Should return 40 refreshed URLs")
 
 
 class TestRefreshSerializerDataURLS(TestCase):
