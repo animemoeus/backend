@@ -13,7 +13,7 @@ from backend.utils.telegram import TelegramWebhookParser
 from .models import Image, TelegramUser
 from .pagination import WaifuListPagination
 from .serializers import WaifuDetailSerializer, WaifuListSerialzer
-from .utils import PixivIllust, refresh_expired_urls
+from .utils import PixivIllust, refresh_expired_urls, refresh_serializer_data_urls
 
 
 class WaifuListView(ListAPIView):
@@ -45,31 +45,13 @@ class WaifuListView(ListAPIView):
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
-
-            original_image_list = [
-                data["original_image"] for data in serializer.data if "cdn.discordapp.com" in data["original_image"]
-            ]
-            thumbnail_list = [
-                data["thumbnail"] for data in serializer.data if "media.discordapp.net" in data["thumbnail"]
-            ]
-
-            discord_file_urls = original_image_list + thumbnail_list
-            refreshed_urls = refresh_expired_urls(discord_file_urls)
-
-            serializer_data = []
-            for data in serializer.data:
-                serializer_data.append(
-                    {
-                        **data,
-                        "original_image": refreshed_urls.get(data["original_image"], data["original_image"]),
-                        "thumbnail": refreshed_urls.get(data["thumbnail"], data["thumbnail"]),
-                    }
-                )
+            serializer_data = refresh_serializer_data_urls(serializer.data)
 
             return self.get_paginated_response(serializer_data)
 
         serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+        serializer_data = refresh_serializer_data_urls(serializer.data)
+        return Response(serializer_data)
 
 
 class WaifuDetailView(RetrieveAPIView):
