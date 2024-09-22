@@ -54,6 +54,12 @@ class WaifuDetailView(RetrieveAPIView):
     serializer_class = WaifuDetailSerializer
     lookup_field = "image_id"
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        serializer_data = refresh_serializer_data_urls([serializer.data])[0]
+        return Response(serializer_data)
+
 
 class RandomWaifuView(GenericAPIView):
     serializer_class = WaifuDetailSerializer
@@ -71,7 +77,8 @@ class RandomWaifuView(GenericAPIView):
     def get(self, request):
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset)
-        return Response(serializer.data)
+        serializer_data = refresh_serializer_data_urls([serializer.data])[0]
+        return Response(serializer_data)
 
 
 class TelegramUserWebhook(APIView):

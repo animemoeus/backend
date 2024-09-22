@@ -45,3 +45,17 @@ class TestWaifuListView(TestCase):
         data = response.json().get("results")[0]
         response = requests.get(data.get("original_image"))
         self.assertEqual(response.status_code, 200, "Should return 200 OK")
+
+
+class TestWaifuDetailView(TestCase):
+    def setUp(self):
+        create_waifu_init_data()
+
+    def test_get_waifu_detail(self):
+        self.assertEqual(Image.objects.all().count(), 2)
+        response = self.client.get(reverse("waifu:detail", kwargs={"image_id": "1275631907933261897"}))
+        self.assertEqual(response.status_code, 200, "Should return 200 OK")
+
+        data = response.json()
+        response = requests.get(data.get("original_image"))
+        self.assertEqual(response.status_code, 200, "Should return 200 OK")
