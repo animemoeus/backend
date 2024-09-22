@@ -51,6 +51,33 @@ def refresh_expired_urls(urls: list[str]) -> dict:
     return result
 
 
+def refresh_serializer_data_urls(data: list[dict]) -> list[dict]:
+    """
+    Refresh expired URLs in the serializer data.
+
+    Args:
+        data (list[dict]): A list of dictionaries containing the serializer data.
+
+    Returns:
+        list[dict]: The updated list of dictionaries with refreshed URLs.
+    """
+    urls = []
+
+    for item in data:
+        if "cdn.discordapp.com" in item.get("original_image", ""):
+            urls.append(item.get("original_image"))
+        if "media.discordapp.net" in item.get("thumbnail", ""):
+            urls.append(item.get("thumbnail"))
+
+    refreshed_urls = refresh_expired_urls(urls)
+
+    for item in data:
+        item["original_image"] = refreshed_urls.get(item.get("original_image"), item.get("original_image"))
+        item["thumbnail"] = refreshed_urls.get(item.get("thumbnail"), item.get("thumbnail"))
+
+    return data
+
+
 class PixivIllust:
     IllustDetail = Any
 
