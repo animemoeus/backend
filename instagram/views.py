@@ -6,6 +6,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from .models import RoastingLog
 from .models import User as InstagramUser
 from .pagination import InstagramUserPagination
 from .serializers import InstagramUserSerializer
@@ -46,6 +47,9 @@ class RoastingProfileView(APIView):
 
         roasting_text = RoastingIG.get_instagram_roasting_text(user_info)
         user_info["roasting_text"] = roasting_text
+
+        # Save to database
+        RoastingLog.objects.create(username=username, roasting_text=roasting_text, user_data=user_info)
         return Response(user_info)
 
     def recaptcha_validation(self, captcha) -> bool:

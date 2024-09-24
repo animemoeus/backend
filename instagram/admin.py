@@ -1,7 +1,7 @@
 from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
 
-from .models import Story, User
+from .models import RoastingLog, Story, User
 
 
 @admin.register(User)
@@ -60,3 +60,11 @@ class StoryAdmin(admin.ModelAdmin):
     readonly_fields = ["story_id", "created_at", "story_created_at"]
     search_fields = ("user", "story_id")
     ordering = ("-story_created_at",)
+
+
+@admin.register(RoastingLog)
+class RoastingLogAdmin(admin.ModelAdmin):
+    list_display = ("username", "created_at")
+    readonly_fields = ("username", "roasting_text", "user_data", "created_at")
+    search_fields = ("username",)
+    ordering = ("-created_at",)
