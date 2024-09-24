@@ -386,3 +386,6 @@ DISCORD_REFRESH_URL_BOT_TOKEN = env.str("DISCORD_REFRESH_URL_BOT_TOKEN", default
 # instagram
 INSTAGRAM_API_URL = env.str("INSTAGRAM_API_URL", default="")
 INSTAGRAM_API_KEY = env.str("INSTAGRAM_API_KEY", default="")
+
+# OpenAI
+OPENAI_API_KEY = env.str("OPENAI_API_KEY", default="")
