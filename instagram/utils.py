@@ -121,15 +121,19 @@ class RoastingIG:
 
                     {formatted_user_data}
 
-                    roasting foto profilnya
-                    roasting username dan atau namanya
+                    roasting namanya jika ada, kalo ga bilang dia anak haram dsb
+                    roasting usernamenya
+                    roasting foto profilnya, kalo kosong: bilang orangnya jelek
                     roasting jumlah following, follower dan post
-                    roasting kategori profilenya jika ada, tuduh dia ngaku ngaku
                     roasting biografinya jika ada, jika kosong: berikan roasting yang berhubungan dengan no life
                     roasting info lainnya juga, jangan lupa pake emoji
 
                     jangan pake list, langsung teks roastingnya
                     jangan ada key dari json yang muncul
+
+                    buat dalam satu kalimat yang panjang
+
+                    kalimatnya pake efek barnum hingga pembaca merasa ini dibuat khusus untuk dia
                     """,
                 },
             ],
