@@ -60,6 +60,9 @@ jobs:
           echo "WAIFU_DISCORD_REFRESH_URL_BOT_TOKEN=${{ secrets.WAIFU_DISCORD_REFRESH_URL_BOT_TOKEN }}" >> .envs/.local/.django
           cat .envs/.local/.django
 
+          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .envs/.local/.django
+          cat .envs/.local/.django
+
           echo "WIREGUARD_HOST=localhost" >> .env
           echo "WIREGUARD_PASSWORD=password" >> .env
           cat .env
