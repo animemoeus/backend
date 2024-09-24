@@ -60,19 +60,79 @@ def user_stories_upload_location(instance, filename):
     return f"instagram/user/{instance.user.username}/stories/{filename}"
 
 
-def get_instagram_roasting_text(data: str):
-    MODEL = "gpt-4o-mini-2024-07-18"
+class RoastingIG:
     client = openai_client
+    model = "gpt-4o-mini-2024-07-18"
 
-    completion = client.chat.completions.create(
-        model=MODEL,
-        messages=[
-            {"role": "system", "content": "You will response with Takagi San from Teasing Master Takagi San"},
-            {
-                "role": "user",
-                "content": """""",
-            },
-        ],
-    )
+    @classmethod
+    def get_profile_picture_keywords(cls, url: str) -> str:
+        response = cls.client.chat.completions.create(
+            model=cls.model,
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "get the keywords from image, separate by comma"},
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": url,
+                            },
+                        },
+                    ],
+                }
+            ],
+            max_tokens=300,
+        )
 
-    print(completion.choices[0].message)
+        return response.choices[0].message.content
+
+    @classmethod
+    def format_user_data(cls, data: dict) -> dict:
+        profile_picture_keywords = cls.get_profile_picture_keywords(data.get("profile_pic_url"))
+
+        return {
+            "profile_picture_keywords": profile_picture_keywords,
+            "nama_lengkap": data.get("full_name", ""),
+            "username": data.get("username"),
+            "is_private_account": data.get("is_private"),
+            "biography": data.get("biography", ""),
+            "links_in_profile": [link.get("url") for link in data.get("bio_links", []) if link.get("url")],
+            "jumlah_follower": data.get("follower_count"),
+            "jumlah_akun_yang_diikuti": data.get("following_count"),
+            "jumlah_postingan": data.get("media_count"),
+        }
+
+    @classmethod
+    def get_instagram_roasting_text(cls, data: str) -> str:
+        formatted_user_data = cls.format_user_data(data)
+
+        completion = cls.client.chat.completions.create(
+            model=cls.model,
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are a greatest roasting assistant. You can give a criticism for every things",
+                },
+                {
+                    "role": "user",
+                    "content": f"""
+                    berikan roasting dengan kejam,menyindir, serta menyakitkan dalam bahasa gaul untuk profile dengan data berikut:
+
+                    {formatted_user_data}
+
+                    roasting foto profilnya
+                    roasting username dan atau namanya
+                    roasting jumlah following, follower dan post
+                    roasting kategori profilenya jika ada, tuduh dia ngaku ngaku
+                    roasting biografinya jika ada, jika kosong: berikan roasting yang berhubungan dengan no life
+                    roasting info lainnya juga, jangan lupa pake emoji
+
+                    jangan pake list, langsung teks roastingnya
+                    jangan ada key dari json yang muncul
+                    """,
+                },
+            ],
+        )
+
+        return completion.choices[0].message.content
