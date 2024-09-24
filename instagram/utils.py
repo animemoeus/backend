@@ -104,7 +104,7 @@ class RoastingIG:
         }
 
     @classmethod
-    def get_instagram_roasting_text(cls, data: str) -> str:
+    def get_instagram_roasting_text(cls, data: dict) -> str:
         formatted_user_data = cls.format_user_data(data)
 
         completion = cls.client.chat.completions.create(

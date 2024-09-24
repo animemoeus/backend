@@ -2,6 +2,7 @@ import requests
 from django.conf import settings
 from rest_framework import filters
 from rest_framework.generics import ListAPIView
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -28,15 +29,22 @@ class InstagramUserListView(ListAPIView):
 
 
 class RoastingProfileView(APIView):
+    permission_classes = [AllowAny]
+
     def get(self, request, username: str):
-        captcha = request.GET.get("captcha", "")
+        captcha = request.query_params.get("captcha")
+        print("captcha", captcha)
         if not self.recaptcha_validation(captcha):
             return Response({"error": "Invalid Captcha"}, status=400)
 
-        instagram_api = InstagramAPI()
-        user_info = instagram_api.get_user_info_v2(username)
-        roasting_text = RoastingIG.get_instagram_roasting_text(user_info)
+        try:
+            instagram_api = InstagramAPI()
+            user_info = instagram_api.get_user_info_v2(username)
+        except Exception as e:
+            _ = e
+            return Response({"error": "Gagal mendapatkan informasi dari server Instagram."}, status=404)
 
+        roasting_text = RoastingIG.get_instagram_roasting_text(user_info)
         user_info["roasting_text"] = roasting_text
         return Response(user_info)
 
