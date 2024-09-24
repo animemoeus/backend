@@ -1,10 +1,10 @@
 from django.urls import path
 
-from .views import GetUserInfo, InstagramUserListView
+from .views import InstagramUserListView, RoastingProfileView
 
 urlpatterns = [
     path("users/", InstagramUserListView.as_view(), name="instagram_user_list"),
-    path("get-user-info/<str:username>/", GetUserInfo.as_view(), name="get-user-info"),
+    path("roasting/<str:username>/", RoastingProfileView.as_view(), name="roasting"),
 ]
 
 app_name = "instagram"

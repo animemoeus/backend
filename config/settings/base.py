@@ -389,3 +389,6 @@ INSTAGRAM_API_KEY = env.str("INSTAGRAM_API_KEY", default="")
 
 # OpenAI
 OPENAI_API_KEY = env.str("OPENAI_API_KEY", default="")
+
+# Google Captcha
+GOOGLE_CAPTCHA_SECRET_KEY = env.str("GOOGLE_CAPTCHA_SECRET_KEY", default="")
