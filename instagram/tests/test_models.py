@@ -1,7 +1,7 @@
 from django.test import TestCase
 
-from .models import Story as InstagramStory
-from .models import User as InstagramUser
+from instagram.models import Story as InstagramStory
+from instagram.models import User as InstagramUser
 
 
 class InstagramTestCase(TestCase):
@@ -97,7 +97,3 @@ class TestInstagramUserStory(TestCase):
             self.assertIsNotNone(story.story_created_at, "The story_created_at should not be None")
             self.assertIsNotNone(story.thumbnail, "The thumbnail should not be None")
             self.assertIsNotNone(story.media, "The media should not be None")
-
-
-class TestInstaloader(TestCase):
-    pass

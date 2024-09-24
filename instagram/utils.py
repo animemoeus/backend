@@ -2,6 +2,8 @@ import requests
 from django.conf import settings
 from rest_framework import status
 
+from backend.utils.openai import openai_client
+
 
 class InstagramAPI:
     def __init__(self):
@@ -56,3 +58,21 @@ def user_profile_picture_upload_location(instance, filename):
 
 def user_stories_upload_location(instance, filename):
     return f"instagram/user/{instance.user.username}/stories/{filename}"
+
+
+def get_instagram_roasting_text(data: str):
+    MODEL = "gpt-4o-mini-2024-07-18"
+    client = openai_client
+
+    completion = client.chat.completions.create(
+        model=MODEL,
+        messages=[
+            {"role": "system", "content": "You will response with Takagi San from Teasing Master Takagi San"},
+            {
+                "role": "user",
+                "content": """""",
+            },
+        ],
+    )
+
+    print(completion.choices[0].message)
