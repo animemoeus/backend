@@ -11,7 +11,7 @@ class InstagramAPI:
         self.base_url = settings.INSTAGRAM_API_URL
         self.headers = {"Authorization": f"Bearer {settings.INSTAGRAM_API_KEY}"}
 
-    @tenacity.retry()
+    @tenacity.retry(stop=tenacity.stop.stop_after_attempt(5), wait=tenacity.wait.wait_random(min=1, max=3))
     def get_user_info_v2(self, username: str) -> dict:
         url = self.base_url + "/api/v1/instagram/web_app/fetch_user_info_by_username_v2"
         params = {"username": username}
@@ -109,17 +109,17 @@ class RoastingIG:
         """
 
         return profile_description
-        return {
-            "profile_picture_keywords": profile_picture_keywords,
-            "nama_lengkap": data.get("full_name", ""),
-            "username": data.get("username"),
-            "is_private_account": data.get("is_private"),
-            "biography": data.get("biography", ""),
-            "links_in_profile": [link.get("url") for link in data.get("bio_links", []) if link.get("url")],
-            "jumlah_follower": data.get("follower_count"),
-            "jumlah_akun_yang_diikuti": data.get("following_count"),
-            "jumlah_postingan": data.get("media_count"),
-        }
+        # return {
+        #     "profile_picture_keywords": profile_picture_keywords,
+        #     "nama_lengkap": data.get("full_name", ""),
+        #     "username": data.get("username"),
+        #     "is_private_account": data.get("is_private"),
+        #     "biography": data.get("biography", ""),
+        #     "links_in_profile": [link.get("url") for link in data.get("bio_links", []) if link.get("url")],
+        #     "jumlah_follower": data.get("follower_count"),
+        #     "jumlah_akun_yang_diikuti": data.get("following_count"),
+        #     "jumlah_postingan": data.get("media_count"),
+        # }
 
     @classmethod
     @tenacity.retry(stop=tenacity.stop.stop_after_attempt(5), wait=tenacity.wait.wait_random(min=1, max=3))
