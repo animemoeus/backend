@@ -6,7 +6,7 @@ from instagram.utils import InstagramAPI, RoastingIG
 class TestGetInstagramRoastingText(TestCase):
     def setUp(self):
         self.instagram_api = InstagramAPI()
-        self.instagram_user_data = self.instagram_api.get_user_info_v2("arter_tendean")
+        self.instagram_user_data = self.instagram_api.get_user_info_v2("angiehsl")
 
     def test_get_profile_picture_keywords(self):
         profile_picture_keywords = RoastingIG.get_profile_picture_keywords(

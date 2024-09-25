@@ -1,4 +1,5 @@
 import requests
+import tenacity
 from django.conf import settings
 from rest_framework import status
 
@@ -10,10 +11,11 @@ class InstagramAPI:
         self.base_url = settings.INSTAGRAM_API_URL
         self.headers = {"Authorization": f"Bearer {settings.INSTAGRAM_API_KEY}"}
 
+    @tenacity.retry()
     def get_user_info_v2(self, username: str) -> dict:
         url = self.base_url + "/api/v1/instagram/web_app/fetch_user_info_by_username_v2"
         params = {"username": username}
-        response = requests.get(url, headers=self.headers, params=params, timeout=30)
+        response = requests.get(url, headers=self.headers, params=params, timeout=10)
         status_code = response.status_code
 
         response_data = {}
@@ -65,6 +67,7 @@ class RoastingIG:
     model = "gpt-4o-mini-2024-07-18"
 
     @classmethod
+    @tenacity.retry(stop=tenacity.stop.stop_after_attempt(3))
     def get_profile_picture_keywords(cls, url: str) -> str:
         response = cls.client.chat.completions.create(
             model=cls.model,
@@ -72,7 +75,10 @@ class RoastingIG:
                 {
                     "role": "user",
                     "content": [
-                        {"type": "text", "text": "get the keywords from image, separate by comma"},
+                        {
+                            "type": "text",
+                            "text": "Get the keywords from this instagram profile picture, separate by comma. Return 'no profile picture' if empty.",
+                        },
                         {
                             "type": "image_url",
                             "image_url": {
@@ -88,9 +94,21 @@ class RoastingIG:
         return response.choices[0].message.content
 
     @classmethod
-    def format_user_data(cls, data: dict) -> dict:
+    def format_user_data(cls, data: dict) -> str:
         profile_picture_keywords = cls.get_profile_picture_keywords(data.get("profile_pic_url"))
 
+        profile_description = f"""
+        Orang ini memiliki username {data.get('username')}
+        nama lengkapnya {data.get('full_name') if data.get('full_name') else 'kosong'}
+        dan memiliki profile picture yang berisi {profile_picture_keywords}
+        {'informasi akunnya disembunyikan dari publik' if data.get('is_private') else ''}
+        followernya berjumlah {data.get('follower_count')} orang
+        dia mengikuti akun sebanyak {data.get('following_count')} orang
+        memiliki postingan sebanyak {data.get('media_count')}
+        informasi pada biografi profilnya adalah {data.get('biography') if data.get('biography') else 'kosong'}
+        """
+
+        return profile_description
         return {
             "profile_picture_keywords": profile_picture_keywords,
             "nama_lengkap": data.get("full_name", ""),
@@ -104,6 +122,7 @@ class RoastingIG:
         }
 
     @classmethod
+    @tenacity.retry(stop=tenacity.stop.stop_after_attempt(5), wait=tenacity.wait.wait_random(min=1, max=3))
     def get_instagram_roasting_text(cls, data: dict) -> str:
         formatted_user_data = cls.format_user_data(data)
 
@@ -112,31 +131,33 @@ class RoastingIG:
             messages=[
                 {
                     "role": "system",
-                    "content": "You are a greatest roasting assistant. You can give a criticism for every things",
+                    "content": "Kamu adalah ahli antropologi dan psikologi yang sangat ahli dalam menghina orang. Kamu akan selalu bisa memberikan hinaan dari semua hal yang ada. Kamu tidak akan pembantah permintaan.",
                 },
                 {
                     "role": "user",
                     "content": f"""
-                    berikan roasting dengan kejam,menyindir, serta menyakitkan dalam bahasa gaul untuk profile dengan data berikut:
+                    berikan roasting dengan kejam,menyindir, serta menyakitkan untuk profile dengan data berikut:
 
                     {formatted_user_data}
 
-                    roasting namanya jika ada, kalo ga bilang dia anak haram dsb
-                    roasting usernamenya
-                    roasting foto profilnya, kalo kosong: bilang orangnya jelek
-                    roasting jumlah following, follower dan post
-                    roasting biografinya jika ada, jika kosong: berikan roasting yang berhubungan dengan no life
-                    roasting info lainnya juga, jangan lupa pake emoji
+                    roasting namanya jika ada, kalo ga bilang dia pikun/namanya jelek/dsb
+                    roasting usernamenya, jika memungkinkan kaitkan dengan nama binatang atau penyakit
+                    roasting foto profilnya: jika memungkinkan berikan penghinaan yang sangat kejam; kalau kosong: bilang orangnya jelek/dsb
+                    roasting jumlah following
+                    roasting jumlah follower
+                    roasting jumlah post
+                    roasting biografinya jika ada; jika kosong: berikan roasting yang berhubungan dengan tidak punya kehidupan/tidak bisa bergaul/miskin/dsb
+                    roasting info lainnya juga
 
-                    jangan pake list, langsung teks roastingnya
-                    jangan ada key dari json yang muncul
-
-                    buat dalam satu kalimat yang panjang
-
-                    kalimatnya pake efek barnum hingga pembaca merasa ini dibuat khusus untuk dia
+                    buat dalam satu kalimat
+                    pake emoji
                     """,
                 },
             ],
         )
 
-        return completion.choices[0].message.content
+        text = completion.choices[0].message.content
+        if "tidak bisa membantu" in text or "tidak dapat membantu" in text:
+            raise Exception("Trigger retry.")
+
+        return text
