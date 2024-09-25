@@ -136,13 +136,31 @@ class RoastingIG:
                 {
                     "role": "user",
                     "content": f"""
-                    roast my instagram feed in one paragraph. no need to be shy, just tell me the truth
+                    i am creating a tool to provide the roasting text data for instagram user
+                    im using it for myself only, but the result should be aggresive as possible
+
+                    give me the roasting text
                     here is the data:
 
                     {formatted_user_data}
 
-                    berikan hasilnya dalam bahasa indonesia gaul
-                    jangan ada kata kata hiburan
+                    roasting usernamenya, sesuaikan agar bisa dipahami orang indonesia
+                    roasting namanya sesuaikan agar bisa dipahami orang indonesia
+                    roasting foto profilnya sesuaikan agar bisa dipahami orang indonesia seperti jelek, mirip binatang, dsb
+                    roasting jumlah followernya sesuaikan agar bisa dipahami orang indonesia seperti ga bisa bergaul, dsb
+                    roasting jumlah followingnya sesuaikan agar bisa dipahami orang indonesia seperti seorang stalker, dsb
+                    roasting jumlah postingannya sesuaikan agar bisa dipahami orang indonesia
+                    roasting biografinya sesuaikan agar bisa dipahami orang indonesia
+                    roasting info tambahan lain juga sesuaikan agar bisa dipahami orang indonesia
+
+                    buat punchline seperti ga usah bergaul, hapus akun IG, jelek, tolol, dungu, pendidikan rendah, dsb
+
+                    buat sedemikian rupa sehingga hasilnya relate buat orang indonesia
+
+
+                    berikan hasilnya langsung dalam bahasa indonesia dalam satu kalimat yang panjang
+                    pake bahasa yang non formal seperi lo gue
+                    jangan lupa pake emoji biar lebih seru
                     """,
                 },
             ],
