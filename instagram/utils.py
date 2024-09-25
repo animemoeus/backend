@@ -136,21 +136,13 @@ class RoastingIG:
                 {
                     "role": "user",
                     "content": f"""
-                    berikan roasting dengan kejam,menyindir, serta menyakitkan untuk profile dengan data berikut:
+                    roast my instagram feed in one paragraph. no need to be shy, just tell me the truth
+                    here is the data:
 
                     {formatted_user_data}
 
-                    roasting namanya jika ada
-                    roasting usernamenya
-                    roasting foto profilnya atau jika kosong, katakan orangnya jelek
-                    roasting jumlah following
-                    roasting jumlah follower
-                    roasting jumlah post
-                    roasting biografinya jika ada
-                    roasting info lainnya juga
-
-                    buat dalam satu kalimat
-                    pake emoji
+                    berikan hasilnya dalam bahasa indonesia gaul
+                    jangan ada kata kata hiburan
                     """,
                 },
             ],
