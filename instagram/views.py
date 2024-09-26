@@ -1,5 +1,6 @@
 import requests
 from django.conf import settings
+from django.core.cache import cache
 from rest_framework import filters
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
@@ -36,7 +37,12 @@ class RoastingProfileView(APIView):
 
         try:
             instagram_api = InstagramAPI()
-            user_info = instagram_api.get_user_info_v2(username)
+
+            user_info = cache.get(f"roastig_{username}")
+            if not user_info:
+                user_info = instagram_api.get_user_info_v2(username)
+                if user_info:
+                    cache.set(f"roastig_{username}", user_info, timeout=600)
         except Exception as e:
             _ = e
             return Response(
