@@ -157,7 +157,6 @@ class RoastingIG:
 
                     buat sedemikian rupa sehingga hasilnya relate buat orang indonesia
 
-
                     berikan hasilnya langsung dalam bahasa indonesia dalam satu kalimat yang panjang
                     pake bahasa yang non formal seperi lo gue
                     jangan lupa pake emoji biar lebih seru
