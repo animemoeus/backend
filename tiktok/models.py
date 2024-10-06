@@ -2,8 +2,8 @@ import uuid
 
 import requests
 from django.core.exceptions import ValidationError
-from django.db import models
 from django.core.files.base import ContentFile
+from django.db import models
 
 
 # TODO: move this function to a separate file
@@ -34,15 +34,14 @@ class User(models.Model):
         if self.username.startswith("@"):
             raise ValidationError("Username should not have `@` prefix")
 
-
-    def save_from_url_to_file_field(self,field_name:str,file_format:str,file_url:str):
-        response = requests.get(file_url,timeout=5)
+    def save_from_url_to_file_field(self, field_name: str, file_format: str, file_url: str):
+        response = requests.get(file_url, timeout=5)
 
         if not response.ok:
             return
 
-        if hasattr(self,field_name):
-            getattr(self,field_name).save(f"{uuid.uuid4()}.{file_format}",ContentFile(response.content))
+        if hasattr(self, field_name):
+            getattr(self, field_name).save(f"{uuid.uuid4()}.{file_format}", ContentFile(response.content))
 
     def update_data_from_api(self):
         from tiktok.utils import TikHubAPI
@@ -57,7 +56,7 @@ class User(models.Model):
         self.visible_content_count = user_info["visible_content_count"]
         self.avatar_url = user_info["avatar"]
 
-        self.save_from_url_to_file_field("avatar_file","jpg",self.avatar_url)
+        self.save_from_url_to_file_field("avatar_file", "jpg", self.avatar_url)
 
         self.save()
 

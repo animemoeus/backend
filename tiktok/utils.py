@@ -147,5 +147,3 @@ def send_to_private_telegram_channel(video_url: str, caption: str = "") -> None:
 
     response = requests.request("POST", url, data=payload)
     return response.status_code
-
-
