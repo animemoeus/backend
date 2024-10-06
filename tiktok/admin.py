@@ -30,7 +30,7 @@ class UserAdmin(admin.ModelAdmin):
     ordering = ("username",)
 
     fieldsets = (
-        (None, {"fields": ("username", "nickname", "avatar_url")}),
+        (None, {"fields": ("username", "nickname", "avatar_url","avatar_file")}),
         (
             "User Info",
             {"fields": ("user_id", "followers", "following", "visible_content_count")},
