@@ -27,6 +27,7 @@ class UserAdmin(admin.ModelAdmin):
         "updated_at",
     ]
     search_fields = ("username", "nickname")
+    ordering = ("username",)
 
     fieldsets = (
         (None, {"fields": ("username", "nickname", "avatar_url")}),
@@ -38,7 +39,7 @@ class UserAdmin(admin.ModelAdmin):
     )
 
     def response_change(self, request, obj):
-        if "_update-data-from-api" in request.POST:
+        if "_update-information-from-api" in request.POST:
             print("Updating data from API")
             self.handle_update_data_from_api(request, obj)
             return HttpResponseRedirect(".")
@@ -51,7 +52,8 @@ class UserAdmin(admin.ModelAdmin):
             self.message_user(request, "Successfully updated user data from API.")
         except Exception as e:
             pass
-            self.message_user(request, "Failed to update user data from the API.", level=messages.ERROR)
+            self.message_user(request, "Failed to update user data from the API.",
+                              level=messages.ERROR)
             self.message_user(request, e, level=messages.ERROR)
 
 

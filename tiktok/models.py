@@ -8,13 +8,13 @@ class User(models.Model):
     """Tiktok user model"""
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    username = models.CharField(max_length=255, unique=True, help_text="Should have prefix `@`")
+    username = models.CharField(max_length=255, unique=True)
     nickname = models.CharField(max_length=255)
     user_id = models.CharField(max_length=255, unique=True)
     followers = models.PositiveIntegerField(default=0)
     following = models.PositiveIntegerField(default=0)
     visible_content_count = models.PositiveIntegerField(default=0)
-    avatar_url = models.URLField()
+    avatar_url = models.URLField(max_length=555)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -23,8 +23,8 @@ class User(models.Model):
         return self.username
 
     def clean(self):
-        if not self.username.startswith("@"):
-            raise ValidationError("Username should have prefix `@`")
+        if self.username.startswith("@"):
+            raise ValidationError("Username should not have `@` prefix")
 
     def update_data_from_api(self):
         from tiktok.utils import TikHubAPI
