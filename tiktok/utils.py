@@ -42,6 +42,7 @@ class TikHubAPI:
         user_info = {
             "nickname": raw_user_info.get("nickname", ""),
             "username": raw_user_info.get("unique_id"),
+            "user_id": raw_user_info.get("id"),
             "avatar": (
                 raw_user_info.get("avatar_larger")["url_list"][-1]
                 if raw_user_info.get("avatar_larger") and raw_user_info.get("avatar_larger")["url_list"]

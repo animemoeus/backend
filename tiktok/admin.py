@@ -1,6 +1,30 @@
 from django.contrib import admin
 
-from .models import SavedTiktokVideo, TiktokMonitor
+from .models import SavedTiktokVideo, TiktokMonitor, User
+
+
+@admin.register(User)
+class UserAdmin(admin.ModelAdmin):
+    readonly_fields = (
+        "nickname",
+        "user_id",
+        "avatar_url",
+        "followers",
+        "following",
+        "visible_content_count",
+        "created_at",
+        "updated_at",
+    )
+    list_display = [
+        "username",
+        "nickname",
+        "following",
+        "followers",
+        "visible_content_count",
+        "created_at",
+        "updated_at",
+    ]
+    search_fields = ("username", "nickname")
 
 
 @admin.register(TiktokMonitor)
