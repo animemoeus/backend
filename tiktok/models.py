@@ -26,6 +26,21 @@ class User(models.Model):
         if not self.username.startswith("@"):
             raise ValidationError("Username should have prefix `@`")
 
+    def update_data_from_api(self):
+        from tiktok.utils import TikHubAPI
+
+        tikhub = TikHubAPI()
+        user_info = tikhub.get_user_info(self.username)
+
+        self.nickname = user_info["nickname"]
+        self.user_id = user_info["user_id"]
+        self.followers = user_info["followers"]
+        self.following = user_info["following"]
+        self.visible_content_count = user_info["visible_content_count"]
+        self.avatar_url = user_info["avatar"]
+
+        self.save()
+
 
 class TiktokMonitor(models.Model):
     """Monitor specific Tiktok user accounts posts"""
