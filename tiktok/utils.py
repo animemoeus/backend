@@ -1,5 +1,6 @@
 import requests
 from django.conf import settings
+from requests import Response
 from saiyaku import retry
 
 from .models import SavedTiktokVideo
@@ -7,16 +8,29 @@ from .models import SavedTiktokVideo
 
 class TikHubAPI:
     def get_tiktok_user_id(self, username: str) -> str:
-        data = self.request(f"/api/v1/tiktok/web/fetch_user_profile?uniqueId={username}")
-        return data.get("id")
+        response = self.request(f"/api/v1/tiktok/web/fetch_user_profile?uniqueId={username}")
+
+        if not response.ok:
+            raise Exception(f"{self.__class__.__name__}: Request failed with status code {response.status_code}")
+
+        response_data = response.json().get("data")
+        user_info = response_data.get("userInfo")
+
+        if not user_info:
+            raise Exception(f"{self.__class__.__name__}: There is no user with username {username}")
+
+        user = user_info.get("user")
+        user_id = user.get("secUid")
+
+        return user_id
 
     @staticmethod
-    def request(url: str, method: str = "GET") -> dict:
+    def request(url: str, method: str = "GET") -> Response:
         base_url = settings.TIKHUB_API_URL
         headers = {"Authorization": f"Bearer {settings.TIKHUB_API_KEY}"}
 
         response = requests.request(method, f"{base_url}/{url}", headers=headers, timeout=10)
-        return response.json()
+        return response
 
 
 class TiktokVideoNoWatermark:
