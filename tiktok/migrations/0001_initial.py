@@ -20,8 +20,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="TiktokMonitor",
             fields=[
-                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False,
-                                           verbose_name="ID")),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
                 ("username", models.CharField(help_text="Should have prefix `@`", max_length=255)),
                 ("enabled", models.BooleanField(default=True)),
                 ("created_at", models.DateTimeField(auto_now_add=True)),

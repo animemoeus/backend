@@ -16,15 +16,13 @@ class TikHubAPI:
         response = self.request(f"/api/v1/tiktok/web/fetch_user_profile?uniqueId={username}")
 
         if not response.ok:
-            raise Exception(
-                f"{self.__class__.__name__}: Request failed with status code {response.status_code}.")
+            raise Exception(f"{self.__class__.__name__}: Request failed with status code {response.status_code}.")
 
         response_data = response.json().get("data")
         user_info = response_data.get("userInfo")
 
         if not user_info:
-            raise Exception(
-                f"{self.__class__.__name__}: There is no user with username {username}.")
+            raise Exception(f"{self.__class__.__name__}: There is no user with username {username}.")
 
         user = user_info.get("user")
         user_id = user.get("secUid")
@@ -47,8 +45,7 @@ class TikHubAPI:
             "user_id": user_id,
             "avatar": (
                 raw_user_info.get("avatar_larger")["url_list"][-1]
-                if raw_user_info.get("avatar_larger") and raw_user_info.get("avatar_larger")[
-                    "url_list"]
+                if raw_user_info.get("avatar_larger") and raw_user_info.get("avatar_larger")["url_list"]
                 else ""
             ),
             "followers": raw_user_info.get("follower_count"),

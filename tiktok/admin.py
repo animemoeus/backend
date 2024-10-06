@@ -52,8 +52,7 @@ class UserAdmin(admin.ModelAdmin):
             self.message_user(request, "Successfully updated user data from API.")
         except Exception as e:
             pass
-            self.message_user(request, "Failed to update user data from the API.",
-                              level=messages.ERROR)
+            self.message_user(request, "Failed to update user data from the API.", level=messages.ERROR)
             self.message_user(request, e, level=messages.ERROR)
 
 

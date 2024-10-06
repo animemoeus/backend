@@ -20,5 +20,4 @@ class TestTikHubAPI(TestCase):
 
     def test_get_user_info(self):
         user_info = self.tikhub.get_user_info("aangiehsl")
-        self.assertEqual(user_info["username"], "arter_tendean",
-                         "Should return the correct username")
+        self.assertEqual(user_info["username"], "arter_tendean", "Should return the correct username")

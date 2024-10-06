@@ -14,10 +14,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="User",
             fields=[
-                ("id", models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True,
-                                        serialize=False)),
-                ("username",
-                 models.CharField(help_text="Should have prefix `@`", max_length=255, unique=True)),
+                ("id", models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
+                ("username", models.CharField(help_text="Should have prefix `@`", max_length=255, unique=True)),
                 ("nickname", models.CharField(max_length=255)),
                 ("user_id", models.CharField(max_length=255, unique=True)),
                 ("followers", models.PositiveIntegerField(default=0)),
