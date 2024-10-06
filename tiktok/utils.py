@@ -5,6 +5,20 @@ from saiyaku import retry
 from .models import SavedTiktokVideo
 
 
+class TikHubAPI:
+    def get_tiktok_user_id(self, username: str) -> str:
+        data = self.request(f"/api/v1/tiktok/web/fetch_user_profile?uniqueId={username}")
+        return data.get("id")
+
+    @staticmethod
+    def request(url: str, method: str = "GET") -> dict:
+        base_url = settings.TIKHUB_API_URL
+        headers = {"Authorization": f"Bearer {settings.TIKHUB_API_KEY}"}
+
+        response = requests.request(method, f"{base_url}/{url}", headers=headers, timeout=10)
+        return response.json()
+
+
 class TiktokVideoNoWatermark:
     """https://github.com/yi005/Tiktok-Video-No-Watermark"""
 
