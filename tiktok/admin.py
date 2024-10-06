@@ -26,6 +26,15 @@ class UserAdmin(admin.ModelAdmin):
     ]
     search_fields = ("username", "nickname")
 
+    fieldsets = (
+        (None, {"fields": ("username", "nickname", "avatar_url")}),
+        (
+            "User Info",
+            {"fields": ("user_id", "followers", "following", "visible_content_count")},
+        ),
+        ("Timestamps", {"fields": ("created_at", "updated_at")}),
+    )
+
 
 @admin.register(TiktokMonitor)
 class TiktokMonitorAdmin(admin.ModelAdmin):

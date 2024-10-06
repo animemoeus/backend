@@ -10,7 +10,7 @@ class User(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     username = models.CharField(max_length=255, unique=True, help_text="Should have prefix `@`")
     nickname = models.CharField(max_length=255)
-    user_id = models.CharField(max_length=255)
+    user_id = models.CharField(max_length=255, unique=True)
     followers = models.PositiveIntegerField(default=0)
     following = models.PositiveIntegerField(default=0)
     visible_content_count = models.PositiveIntegerField(default=0)
