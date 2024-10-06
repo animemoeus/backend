@@ -389,6 +389,10 @@ DISCORD_REFRESH_URL_BOT_TOKEN = env.str("DISCORD_REFRESH_URL_BOT_TOKEN", default
 INSTAGRAM_API_URL = env.str("INSTAGRAM_API_URL", default="")
 INSTAGRAM_API_KEY = env.str("INSTAGRAM_API_KEY", default="")
 
+# tikhub
+TIKHUB_API_URL = env.str("TIKHUB_API_URL", default="")
+TIKHUB_API_KEY = env.str("TIKHUB_API_KEY", default="")
+
 # OpenAI
 OPENAI_API_KEY = env.str("OPENAI_API_KEY", default="")
 
