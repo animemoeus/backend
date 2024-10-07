@@ -13,7 +13,7 @@ from backend.utils.telegram import TelegramWebhookParser
 from .models import Image, TelegramUser
 from .pagination import WaifuListPagination
 from .serializers import WaifuDetailSerializer, WaifuListSerialzer
-from .utils import PixivIllust
+from .utils import PixivIllust, refresh_serializer_data_urls
 
 
 class WaifuListView(ListAPIView):
@@ -21,6 +21,9 @@ class WaifuListView(ListAPIView):
     pagination_class = WaifuListPagination
 
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    ordering = ["-id"]
+    ordering_fields = ["created_at", "updated_at", "creator_name", "creator_username", "id"]
+    search_fields = ["caption", "creator_name", "creator_username"]
     filterset_fields = [
         "is_nsfw",
         "creator_name",
@@ -29,25 +32,33 @@ class WaifuListView(ListAPIView):
         "created_at",
         "updated_at",
     ]
-    search_fields = ["caption", "creator_name", "creator_username"]
-    ordering_fields = ["created_at", "updated_at", "creator_name", "creator_username", "id"]
-    ordering = ["-id"]
 
     def get_queryset(self):
         nsfw = self.request.query_params.get("nsfw")
-        queryset = (
-            Image.objects.all().order_by("-id")
-            if nsfw == "true"
-            else Image.objects.filter(is_nsfw=False).order_by("-id")
-        )
+        queryset = Image.objects.all().order_by("-id") if nsfw else Image.objects.filter(is_nsfw=False).order_by("-id")
 
         return queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        serializer = self.get_serializer(page, many=True)
+        serializer_data = refresh_serializer_data_urls(serializer.data)
+
+        return self.get_paginated_response(serializer_data)
 
 
 class WaifuDetailView(RetrieveAPIView):
     queryset = Image.objects.all()
     serializer_class = WaifuDetailSerializer
     lookup_field = "image_id"
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        serializer_data = refresh_serializer_data_urls([serializer.data])[0]
+        return Response(serializer_data)
 
 
 class RandomWaifuView(GenericAPIView):
@@ -66,7 +77,8 @@ class RandomWaifuView(GenericAPIView):
     def get(self, request):
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset)
-        return Response(serializer.data)
+        serializer_data = refresh_serializer_data_urls([serializer.data])[0]
+        return Response(serializer_data)
 
 
 class TelegramUserWebhook(APIView):

@@ -171,6 +171,18 @@ class Story(models.Model):
             getattr(self, field_name).save(f"{uuid.uuid4()}.{file_format}", ContentFile(response.content))
 
 
+class RoastingLog(models.Model):
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    username = models.CharField(max_length=255)
+    user_data = models.JSONField()
+    roasting_text = models.TextField()
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.username}"
+
+
 @receiver(post_save, sender=Story)
 def story_post_save(sender, instance, **kwargs):
     # Check if the thumbnail is empty and update the file field

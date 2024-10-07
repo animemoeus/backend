@@ -166,7 +166,6 @@ MIDDLEWARE = [
 ROOT_HOSTCONF = "config.hosts"
 DEFAULT_HOST = "www"
 
-
 # STATIC
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#static-root
@@ -349,7 +348,9 @@ REST_FRAMEWORK = {
 # django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup
 # CORS_URLS_REGEX = r"^/api/.*$"
 CORS_ALLOW_ALL_ORIGINS = True  # Update this to specific domains later
+# CORS_ALLOW_CREDENTIALS = True
 
+# CORS_ALLOW_ALL_ORIGINS = True
 # By Default swagger ui is available only to admin user(s). You can change permission classes to change that
 # See more configuration options at https://drf-spectacular.readthedocs.io/en/latest/settings.html#settings
 SPECTACULAR_SETTINGS = {
@@ -368,11 +369,10 @@ DISCORD_STORAGE_UPLOAD_FROM_FILE_WEBHOOK = env.str("DISCORD_STORAGE_UPLOAD_FROM_
 TIKTOK_MONITOR_TELEGRAM_BOT_SECRET = env.str("TIKTOK_MONITOR_TELEGRAM_BOT_SECRET", default="")
 TIKTOK_MONITOR_TELEGRAM_PRIVATE_CHANNEL_ID = env.str("TIKTOK_MONITOR_TELEGRAM_PRIVATE_CHANNEL_ID", default="")
 
-
 # Waifu
 PIXIVPY_3_REFRESH_TOKEN = env.str("PIXIVPY_3_REFRESH_TOKEN", default="")
 WAIFU_TELEGRAM_BOT_TOKEN = env.str("WAIFU_TELEGRAM_BOT_TOKEN", default="")
-
+WAIFU_DISCORD_REFRESH_URL_BOT_TOKEN = env.str("WAIFU_DISCORD_REFRESH_URL_BOT_TOKEN", default="")
 
 # twitter_video_downloader
 TWITTER_DOWNLOADER_API_URL = env.str("TWITTER_DOWNLOADER_API_URL", default="")
@@ -385,7 +385,12 @@ TWITTER_VIDEO_DOWNLOADER_BOT_TOKEN = env.str("TWITTER_VIDEO_DOWNLOADER_BOT_TOKEN
 DISCORD_REFRESH_URL = env.str("DISCORD_REFRESH_URL", default="")
 DISCORD_REFRESH_URL_BOT_TOKEN = env.str("DISCORD_REFRESH_URL_BOT_TOKEN", default="")
 
-
 # instagram
 INSTAGRAM_API_URL = env.str("INSTAGRAM_API_URL", default="")
 INSTAGRAM_API_KEY = env.str("INSTAGRAM_API_KEY", default="")
+
+# OpenAI
+OPENAI_API_KEY = env.str("OPENAI_API_KEY", default="")
+
+# Google Captcha
+GOOGLE_CAPTCHA_SECRET_KEY = env.str("GOOGLE_CAPTCHA_SECRET_KEY", default="")
