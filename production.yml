@@ -79,7 +79,7 @@ services:
       - WG_DEFAULT_ADDRESS=10.7.0.x
       - UI_TRAFFIC_STATS=true
       - UI_CHART_TYPE=2
-    image: ghcr.io/wg-easy/wg-easy
+    image: ghcr.io/wg-easy/wg-easy:latest
     container_name: wireguard
     volumes:
       - etc_wireguard:/etc/wireguard
