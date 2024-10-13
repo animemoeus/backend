@@ -157,17 +157,24 @@ class Settings(SingletonModel):
     webhook_url = models.URLField(blank=True)
 
     is_maintenance = models.BooleanField(default=False)
+    secret_token = models.CharField(blank=True)
 
     def __str__(self):
         return "Twitter Downloader Settings"
 
     def save(self, *args, **kwargs):
-        self.set_webhook()
+        if self.webhook_url:
+            self.set_webhook()
+
         super().save(*args, **kwargs)
 
     def set_webhook(self) -> bool:
-        if self.webhook_url:
-            url = f"https://api.telegram.org/bot{settings.TWITTER_VIDEO_DOWNLOADER_BOT_TOKEN}/setWebhook?url={self.webhook_url}/"
-            response = requests.request("GET", url)
+        url = f"https://api.telegram.org/bot{settings.TWITTER_VIDEO_DOWNLOADER_BOT_TOKEN}/setWebhook"
 
-            return response.ok
+        payload = {
+            "url": self.webhook_url,
+            "secret_token": self.secret_token,
+        }
+
+        response = requests.request("POST", url, data=payload)
+        return response.ok

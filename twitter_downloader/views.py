@@ -36,6 +36,15 @@ class SafelinkView(View):
 
 class TelegramWebhookView(APIView):
     def post(self, request):
+        # Fix DDOS Issue 438
+        # https://github.com/animemoeus/backend/issues/438
+        if (
+            TwitterDownloaderSettings.get_solo().secret_token
+            and request.headers.get("X-Telegram-Bot-Api-Secret-Token", "")
+            != TwitterDownloaderSettings.get_solo().secret_token
+        ):
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
         webhook = TelegramWebhookParser(request.body)
         if not webhook.data:
             return Response()
