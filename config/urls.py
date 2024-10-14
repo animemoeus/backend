@@ -22,6 +22,8 @@ urlpatterns = [
     path("waifu/", include("waifu.urls", namespace="waifu")),
     path("health-check/", include("health_check.urls", namespace="health-check")),
     path("twitter-downloader/", include("twitter_downloader.urls", namespace="twitter-downloader")),
+    # Prometheus
+    path("", include("django_prometheus.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # API URLS
