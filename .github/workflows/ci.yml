@@ -77,10 +77,7 @@ jobs:
       - name: Run DB Migrations
         run: docker compose -f local.yml run --rm django python manage.py migrate
 
-      # - name: Run Django Tests
-      #   run: docker compose -f local.yml run django pytest
-
-      - name: Run Tests & Coverage
+      - name: Run Django Tests & Coverage
         run: docker compose -f local.yml run django pytest --cov --cov-report=xml
 
       - name: Upload results to Codecov
