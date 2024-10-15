@@ -41,7 +41,7 @@ class BaseTelegramUserModel(models.Model):
         self.send_chat_action("typing")
 
         url = f"https://api.telegram.org/bot{self.BOT_TOKEN}/sendMessage"
-        payload = json.dumps({"chat_id": self.user_id, "text": message})
+        payload = json.dumps({"chat_id": self.user_id, "text": message, "parse_mode": "HTML"})
         headers = {"Content-Type": "application/json"}
 
         response = requests.request("POST", url, headers=headers, data=payload)
