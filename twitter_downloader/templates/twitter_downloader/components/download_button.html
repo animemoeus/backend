@@ -3,11 +3,11 @@
     {% csrf_token %}
     <div class="text-center p-0 m-0">
       <input type="hidden" name="uuid" value="{{ uuid }}" />
-      <span id="continueButton" class="btn btn-primary" onclick="showDownloadButton()">
+      <span id="continueButton" class="btn btn-danger" onclick="showDownloadButton()">
         <small>Continue Download</small>
       </span>
 
-      <button type="submit" id="downloadButton" class="btn btn-primary" disabled onclick="">
+      <button type="submit" id="downloadButton" class="btn btn-primary" disabled onclick="this.innerHTML='Sending...'">
         <small>Download</small>
       </button>
     </div>
