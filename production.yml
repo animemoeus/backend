@@ -42,7 +42,7 @@ services:
     image: backend_production_celeryworker
     command: /start-celeryworker
     deploy:
-      replicas: 2
+      replicas: 3
 
   celerybeat:
     <<: *django
