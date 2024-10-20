@@ -53,6 +53,10 @@ class TestTelegramUserModel(TestCase):
 
         self.assertEqual(result, True, "Test send video")
 
+    def test_send_download_button_with_safelink(self):
+        result = self.telegram_user.send_download_button_with_safelink("Arter Tendean", "https://animemoe.us")
+        self.assertEqual(result, True, "Sould return 200 OK (True)")
+
     def test_send_big_video(self):
         result = self.telegram_user.send_video(
             {

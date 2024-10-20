@@ -116,7 +116,7 @@ class TelegramUser(BaseTelegramUserModel):
         response = requests.request("POST", url, headers=headers, data=payload)
         return response.ok
 
-    def send_message_with_inline_keyboard(
+    def send_download_button_with_safelink(
         self,
         inline_text: str,
         inline_url: str,
@@ -160,7 +160,7 @@ class DownloadedTweet(models.Model):
 
     def send_to_telegram_user(self) -> bool:
         url = f'https://api.animemoe.us{reverse("twitter-downloader:safelink")}?key={str(self.uuid)}'
-        result = self.telegram_user.send_message_with_inline_keyboard("🔰 DOWNLOAD 🔰", url)
+        result = self.telegram_user.send_download_button_with_safelink("🔰 DOWNLOAD 🔰", url)
 
         return result
 
