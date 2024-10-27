@@ -7,15 +7,17 @@ from backend.utils.openai import openai_client
 
 
 class InstagramAPI:
+    REQUEST_TIMEOUT = 30
+
     def __init__(self):
         self.base_url = settings.INSTAGRAM_API_URL
         self.headers = {"Authorization": f"Bearer {settings.INSTAGRAM_API_KEY}"}
 
-    @tenacity.retry(stop=tenacity.stop.stop_after_attempt(5), wait=tenacity.wait.wait_random(min=1, max=3))
+    @tenacity.retry(stop=tenacity.stop.stop_after_attempt(3), wait=tenacity.wait.wait_random(min=1, max=5))
     def get_user_info_v2(self, username: str) -> dict:
         url = self.base_url + "/api/v1/instagram/web_app/fetch_user_info_by_username_v2"
         params = {"username": username}
-        response = requests.get(url, headers=self.headers, params=params, timeout=10)
+        response = requests.get(url, headers=self.headers, params=params, timeout=self.REQUEST_TIMEOUT)
         status_code = response.status_code
 
         response_data = {}
@@ -25,10 +27,11 @@ class InstagramAPI:
 
         return response_data
 
+    @tenacity.retry(stop=tenacity.stop.stop_after_attempt(3), wait=tenacity.wait.wait_random(min=1, max=5))
     def get_user_info_by_id_v2(self, user_id: str) -> dict:
         url = self.base_url + "/api/v1/instagram/web_app/fetch_user_info_by_user_id_v2"
         params = {"user_id": user_id}
-        response = requests.get(url, headers=self.headers, params=params, timeout=30)
+        response = requests.get(url, headers=self.headers, params=params, timeout=self.REQUEST_TIMEOUT)
         status_code = response.status_code
 
         response_data = {}
@@ -38,10 +41,11 @@ class InstagramAPI:
 
         return response_data
 
+    @tenacity.retry(stop=tenacity.stop.stop_after_attempt(3), wait=tenacity.wait.wait_random(min=1, max=5))
     def get_user_stories(self, username: str) -> tuple[int, list]:
         url = self.base_url + "/api/v1/instagram/web_app/fetch_user_stories_by_username"
         params = {"username": username}
-        response = requests.get(url, headers=self.headers, params=params, timeout=30)
+        response = requests.get(url, headers=self.headers, params=params, timeout=self.REQUEST_TIMEOUT)
         status_code = response.status_code
 
         response_data = {}
