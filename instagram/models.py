@@ -96,7 +96,7 @@ class User(models.Model):
         status_code, raw_stories = api_client.get_user_stories(self.username)
 
         if status_code != status.HTTP_200_OK:
-            return
+            return []
 
         stories = []
         for story in raw_stories:
