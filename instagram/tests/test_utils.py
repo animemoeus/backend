@@ -3,6 +3,24 @@ from django.test import TestCase
 from instagram.utils import InstagramAPI, RoastingIG
 
 
+class TestInstagramAPI(TestCase):
+    def setUp(self):
+        self.instagram_api = InstagramAPI()
+        self.test_user_1 = "angiehsl"
+
+    def test_get_user_info_v2(self):
+        user_info = self.instagram_api.get_user_info_v2(self.test_user_1)
+        self.assertIsNotNone(user_info, "Should return user information")
+
+    def test_get_user_info_by_id_v2(self):
+        user_info = self.instagram_api.get_user_info_by_id_v2("1731393118")
+        self.assertIsNotNone(user_info, "Should return user information")
+
+    def test_get_user_stories(self):
+        status_code, stories = self.instagram_api.get_user_stories(self.test_user_1)
+        self.assertIsNotNone(stories, "Should return user stories")
+
+
 class TestGetInstagramRoastingText(TestCase):
     def setUp(self):
         self.instagram_api = InstagramAPI()
