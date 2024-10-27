@@ -12,6 +12,7 @@ class UserAdmin(admin.ModelAdmin):
     list_display = (
         "username",
         "updated_from_api_datetime",
+        "allow_auto_update_stories",
         "created_at",
         "updated_at",
         "follower_count",
