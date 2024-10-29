@@ -11,7 +11,7 @@ def get_instagram_users_stories():
         get_instagram_user_stories.delay(user.username)
 
 
-@shared_task
+@shared_task(soft_time_limit=600)
 def get_instagram_user_stories(username: str):
     instagram_user = InstagramUser.objects.get(username=username)
     stories, saved_stories = instagram_user.update_user_stories()
