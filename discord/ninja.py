@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.shortcuts import redirect
 from ninja import NinjaAPI
 
@@ -7,10 +8,10 @@ api = NinjaAPI()
 
 
 @api.get("")
-def hello(request, url: str):
+def refresh(request, url: str):
     refreshed_url = DiscordAPI.refresh_url(url)
 
     if refreshed_url:
         return redirect(refreshed_url)
     else:
-        return redirect("https://github.com/animemoeus/backend")
+        return HttpResponse(status=444)
