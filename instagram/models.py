@@ -28,6 +28,8 @@ class User(models.Model):
 
     updated_from_api_datetime = models.DateTimeField(verbose_name="Update from API datetime", blank=True, null=True)
 
+    allow_auto_update_stories = models.BooleanField(default=False)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -96,7 +98,7 @@ class User(models.Model):
         status_code, raw_stories = api_client.get_user_stories(self.username)
 
         if status_code != status.HTTP_200_OK:
-            return
+            return []
 
         stories = []
         for story in raw_stories:

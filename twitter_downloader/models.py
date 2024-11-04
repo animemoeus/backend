@@ -116,6 +116,36 @@ class TelegramUser(BaseTelegramUserModel):
         response = requests.request("POST", url, headers=headers, data=payload)
         return response.ok
 
+    def send_download_button_with_safelink(
+        self,
+        inline_text: str,
+        inline_url: str,
+    ):
+        url = f"https://api.telegram.org/bot{self.BOT_TOKEN}/sendMessage"
+        headers = {"Content-Type": "application/json"}
+
+        payload = json.dumps(
+            {
+                "chat_id": self.user_id,
+                "text": "Click the button below to continue! 😉\n\nAnd hey, don’t forget to click the ads to support this bot!\nYour clicks help keep things running smoothly! 💡",
+                "parse_mode": "HTML",
+                "disable_web_page_preview": "True",
+                "reply_markup": {
+                    "inline_keyboard": [
+                        [
+                            {
+                                "text": inline_text,
+                                "web_app": {"url": inline_url},
+                            }
+                        ],
+                    ]
+                },
+            }
+        )
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+        return response.ok
+
 
 class DownloadedTweet(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -130,7 +160,7 @@ class DownloadedTweet(models.Model):
 
     def send_to_telegram_user(self) -> bool:
         url = f'https://api.animemoe.us{reverse("twitter-downloader:safelink")}?key={str(self.uuid)}'
-        result = self.telegram_user.send_image_with_inline_keyboard(self.tweet_data.get("thumbnail"), "Download", url)
+        result = self.telegram_user.send_download_button_with_safelink("🔰 DOWNLOAD 🔰", url)
 
         return result
 

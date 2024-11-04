@@ -1,5 +1,3 @@
-version: "3"
-
 volumes:
   production_postgres_data: {}
   production_postgres_data_backups: {}
@@ -8,6 +6,7 @@ volumes:
 
 services:
   django: &django
+    restart: unless-stopped
     build:
       context: .
       dockerfile: ./compose/production/django/Dockerfile
@@ -24,6 +23,7 @@ services:
     command: /start
 
   postgres:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: ./compose/production/postgres/Dockerfile
@@ -35,9 +35,11 @@ services:
       - ./.envs/.production/.postgres
 
   redis:
+    restart: unless-stopped
     image: redis:6
 
   celeryworker:
+    restart: unless-stopped
     <<: *django
     image: backend_production_celeryworker
     command: /start-celeryworker
@@ -45,16 +47,19 @@ services:
       replicas: 2
 
   celerybeat:
+    restart: unless-stopped
     <<: *django
     image: backend_production_celerybeat
     command: /start-celerybeat
 
   flower:
+    restart: unless-stopped
     <<: *django
     image: backend_production_flower
     command: /start-flower
 
   nginx:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: ./compose/production/nginx/Dockerfile
@@ -67,12 +72,14 @@ services:
       - 80:80
 
   dozzle:
+    restart: unless-stopped
     container_name: dozzle
     image: amir20/dozzle:latest
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
   wireguard:
+    restart: unless-stopped
     environment:
       - WG_HOST=${WIREGUARD_HOST}
       - PASSWORD=${WIREGUARD_PASSWORD}
@@ -85,7 +92,6 @@ services:
       - etc_wireguard:/etc/wireguard
     ports:
       - "51820:51820/udp"
-    restart: unless-stopped
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
