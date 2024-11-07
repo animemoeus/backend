@@ -8,6 +8,8 @@ class InstagramTestCase(TestCase):
     def setUp(self):
         self.user_1 = InstagramUser.objects.create(username="arter_tendean")
         self.user_2 = InstagramUser.objects.create(username="retra_naednet")
+        self.follower_1 = InstagramUser.objects.create(username="follower_1")
+        self.following_1 = InstagramUser.objects.create(username="following_1")
 
     def test_get_information_from_api(self):
         user_1_info = self.user_1.get_information_from_api()
@@ -52,6 +54,30 @@ class InstagramTestCase(TestCase):
         user_1_stories = self.user_1.get_user_stories()
 
         self.assertEqual(type(user_1_stories), list)
+
+    def test_add_follower(self):
+        self.user_1.follower.add(self.follower_1)
+        self.assertIn(self.follower_1, self.user_1.follower.all())
+
+    def test_failed_add_follower(self):
+        has_error = False
+        try:
+            self.user_1.follower.add(self.user_1)
+        except Exception:
+            has_error = True
+        self.assertTrue(has_error)
+
+    def test_add_following(self):
+        self.user_1.following.add(self.following_1)
+        self.assertIn(self.following_1, self.user_1.following.all())
+
+    def test_failed_add_following(self):
+        has_error = False
+        try:
+            self.user_1.following.add(self.user_1)
+        except Exception:
+            has_error = True
+        self.assertTrue(has_error)
 
 
 class TestInstagramUserStory(TestCase):
