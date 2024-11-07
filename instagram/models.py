@@ -2,9 +2,10 @@ import uuid
 from typing import Self
 
 import requests
+from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.db import models
-from django.db.models.signals import post_save
+from django.db.models.signals import m2m_changed, post_save
 from django.dispatch import receiver
 from django.utils import timezone
 from rest_framework import status
@@ -25,6 +26,9 @@ class User(models.Model):
     biography = models.TextField(blank=True)
     follower_count = models.PositiveIntegerField(default=0)
     following_count = models.PositiveIntegerField(default=0)
+
+    follower = models.ManyToManyField("self", symmetrical=False, blank=True, related_name="followers_set")
+    following = models.ManyToManyField("self", symmetrical=False, blank=True, related_name="following_set")
 
     updated_from_api_datetime = models.DateTimeField(verbose_name="Update from API datetime", blank=True, null=True)
 
@@ -195,3 +199,13 @@ def story_post_save(sender, instance, **kwargs):
     if not instance.media and instance.media_url:
         media_type = instance.media_url.split("?")[0].split(".")[-1]  # Should be jpg or mp4
         instance.save_from_url_to_file_field("media", media_type, instance.media_url)
+
+
+# Prevent user from following or being followed by themselves
+@receiver(m2m_changed, sender=User.follower.through)
+@receiver(m2m_changed, sender=User.following.through)
+def prevent_self_follow(sender, instance, action, reverse, model, pk_set, **kwargs):
+    if action == "pre_add":
+        # Check if the user is trying to follow or being followed by themselves
+        if instance.uuid in pk_set:
+            raise ValidationError("A user cannot follow or be followed by themselves.")

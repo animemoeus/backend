@@ -8,6 +8,8 @@ from .models import RoastingLog, Story, User
 class UserAdmin(admin.ModelAdmin):
     change_form_template = "instagram/admin_edit_form.html"
 
+    filter_horizontal = ["follower", "following"]
+
     search_fields = ("username",)
     list_display = (
         "username",
