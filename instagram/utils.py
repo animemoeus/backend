@@ -82,12 +82,18 @@ class InstagramAPI:
 
         followers = []
         pagination = ""
+        counter = 1
         while True:
             _followers, _pagination = get_user_followers_with_pagination(username, pagination)
             followers.extend(_followers)  # Lebih optimal daripada `+=`
             pagination = _pagination
 
+            counter += 1
+
             if not pagination:
+                break
+
+            if counter > 5:
                 break
 
         return followers
@@ -115,12 +121,18 @@ class InstagramAPI:
 
         following = []
         pagination = ""
+        counter = 1
         while True:
             _following, _pagination = get_user_followers_with_pagination(username, pagination)
             following.extend(_following)  # Lebih optimal daripada `+=`
             pagination = _pagination
 
+            counter += 1
+
             if not pagination:
+                break
+
+            if counter > 5:
                 break
 
         return following

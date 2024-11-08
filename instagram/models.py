@@ -10,7 +10,7 @@ from django.utils import timezone
 from rest_framework import status
 
 from .mixins import URLToFileFieldMixin
-from .tasks import user_following_update_profil_pictures
+from .tasks import user_follower_update_profil_pictures, user_following_update_profil_pictures
 from .utils import (
     InstagramAPI,
     user_follower_profile_picture_upload_location,
@@ -141,6 +141,28 @@ class User(models.Model):
                 saved_stories.append(x)
 
         return stories, saved_stories
+
+    @transaction.atomic
+    def update_user_follower(self):
+        api_client = InstagramAPI()
+        follower = api_client.get_user_followers(self.username)
+
+        if follower:
+            UserFollower.objects.filter(user=self).delete()
+
+        user_follower_list = [
+            UserFollower(
+                user=self,
+                instagram_id=user.get("id"),
+                username=user.get("username"),
+                full_name=user.get("full_name"),
+                profile_picture_url=user.get("profile_pic_url"),
+                is_private_account=user.get("is_private"),
+            )
+            for user in follower
+        ]
+        UserFollower.objects.bulk_create(user_follower_list)
+        user_follower_update_profil_pictures.delay(self.instagram_id)
 
     @transaction.atomic
     def update_user_following(self):

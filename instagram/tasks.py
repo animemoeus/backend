@@ -60,3 +60,26 @@ def user_following_update_profil_picture(id: str) -> str:
     user_following.save()
 
     return user_following.username
+
+
+@shared_task
+def user_follower_update_profil_pictures(instagram_id: str) -> str:
+    from .models import User as InstagramUser
+    from .models import UserFollower
+
+    instagram_user = InstagramUser.objects.get(instagram_id=instagram_id)
+
+    for user in UserFollower.objects.filter(user=instagram_user):
+        user_follower_update_profil_picture.delay(user.id)
+
+    return instagram_user.username
+
+
+@shared_task
+def user_follower_update_profil_picture(id: str) -> str:
+    from .models import UserFollower
+
+    user_follower = UserFollower.objects.get(id=id)
+    user_follower.save()
+
+    return user_follower.username

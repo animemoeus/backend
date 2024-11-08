@@ -71,6 +71,8 @@ class UserFollowerAdmin(admin.ModelAdmin):
         "created_at",
     ]
 
+    search_fields = ["user__username"]
+
 
 @admin.register(UserFollowing)
 class UserFollowingAdmin(admin.ModelAdmin):
@@ -79,6 +81,7 @@ class UserFollowingAdmin(admin.ModelAdmin):
         "profile_picture",
         "created_at",
     ]
+    search_fields = ["user__username"]
 
 
 @admin.register(RoastingLog)
