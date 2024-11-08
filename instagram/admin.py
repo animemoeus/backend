@@ -40,6 +40,14 @@ class UserAdmin(admin.ModelAdmin):
             self.handle_update_user_stories(request, obj)
             return HttpResponseRedirect(".")
 
+        if "_update-follower-from-api" in request.POST:
+            self.handle_update_user_follower(request, obj)
+            return HttpResponseRedirect(".")
+
+        if "_update-following-from-api" in request.POST:
+            self.handle_update_user_following(request, obj)
+            return HttpResponseRedirect(".")
+
         return super().response_change(request, obj)
 
     def handle_update_information_from_api(self, request, obj: User):
@@ -53,6 +61,14 @@ class UserAdmin(admin.ModelAdmin):
     def handle_update_user_stories(self, request, obj: User):
         stories, saved_stories = obj.update_user_stories()
         self.message_user(request, f"{len(saved_stories)}/{len(stories)} stories updated")
+
+    def handle_update_user_follower(self, request, obj: User):
+        obj.update_user_follower()
+        self.message_user(request, "User follower updated")
+
+    def handle_update_user_following(self, request, obj: User):
+        obj.update_user_following()
+        self.message_user(request, "User following updated")
 
 
 @admin.register(Story)
