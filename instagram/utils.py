@@ -93,7 +93,7 @@ class InstagramAPI:
             if not pagination:
                 break
 
-            if counter > 5:
+            if counter > 7:
                 break
 
         return followers
@@ -132,7 +132,7 @@ class InstagramAPI:
             if not pagination:
                 break
 
-            if counter > 5:
+            if counter > 7:
                 break
 
         return following
