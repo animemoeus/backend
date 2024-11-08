@@ -2,6 +2,7 @@ from django.test import TestCase
 
 from instagram.models import Story as InstagramStory
 from instagram.models import User as InstagramUser
+from instagram.models import UserFollowing
 
 
 class InstagramTestCase(TestCase):
@@ -56,35 +57,21 @@ class InstagramTestCase(TestCase):
 
         self.assertEqual(type(user_1_stories), list)
 
-    def test_add_follower(self):
-        self.user_1.follower.add(self.follower_1)
-        self.assertIn(self.follower_1, self.user_1.follower.all())
-
-    def test_failed_add_follower(self):
-        has_error = False
-        try:
-            self.user_1.follower.add(self.user_1)
-        except Exception:
-            has_error = True
-        self.assertTrue(has_error)
-
-    def test_add_following(self):
-        self.user_1.following.add(self.following_1)
-        self.assertIn(self.following_1, self.user_1.following.all())
-
-    def test_failed_add_following(self):
-        has_error = False
-        try:
-            self.user_1.following.add(self.user_1)
-        except Exception:
-            has_error = True
-        self.assertTrue(has_error)
-
     def test_update_user_following(self):
-        InstagramUser.objects.create(username="aenjies")
-        InstagramUser.objects.create(username="angiehsl")
-        InstagramUser.objects.create(username="xtra.artx")
-        self.user_3.update_user_following()
+        UserFollowing.objects.create(user=self.user_1, username="following_1")
+        UserFollowing.objects.create(user=self.user_1, username="following_2")
+        UserFollowing.objects.create(user=self.user_1, username="following_3")
+        UserFollowing.objects.create(user=self.user_2, username="following_3")
+
+        print(UserFollowing.objects.filter(user=self.user_1))
+        print(UserFollowing.objects.all())
+        UserFollowing.objects.filter(user=self.user_1).delete()
+        print(UserFollowing.objects.all())
+        self.user_1.update_user_following()
+        for i in UserFollowing.objects.filter(user=self.user_1):
+            print(i.__dict__)
+
+        # self.user_1.update_user_following()
 
 
 class TestInstagramUserStory(TestCase):

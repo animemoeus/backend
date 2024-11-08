@@ -1,10 +1,10 @@
 from celery import shared_task
 
-from .models import User as InstagramUser
-
 
 @shared_task
 def get_instagram_users_stories():
+    from .models import User as InstagramUser
+
     instagram_user = InstagramUser.objects.filter(allow_auto_update_stories=True)
 
     for user in instagram_user:
@@ -13,6 +13,8 @@ def get_instagram_users_stories():
 
 @shared_task(soft_time_limit=600)
 def get_instagram_user_stories(username: str):
+    from .models import User as InstagramUser
+
     instagram_user = InstagramUser.objects.get(username=username)
     stories, saved_stories = instagram_user.update_user_stories()
 
@@ -21,6 +23,8 @@ def get_instagram_user_stories(username: str):
 
 @shared_task
 def update_instagram_users_profile():
+    from .models import User as InstagramUser
+
     instagram_user = InstagramUser.objects.all()
 
     for user in instagram_user:
@@ -29,5 +33,30 @@ def update_instagram_users_profile():
 
 @shared_task
 def update_instagram_user_profile(username: str):
+    from .models import User as InstagramUser
+
     instagram_user = InstagramUser.objects.get(username=username)
     instagram_user.update_information_from_api()
+
+
+@shared_task
+def user_following_update_profil_pictures(instagram_id: str) -> str:
+    from .models import User as InstagramUser
+    from .models import UserFollowing
+
+    instagram_user = InstagramUser.objects.get(instagram_id=instagram_id)
+
+    for user in UserFollowing.objects.filter(user=instagram_user):
+        user_following_update_profil_picture.delay(user.id)
+
+    return instagram_user.username
+
+
+@shared_task
+def user_following_update_profil_picture(id: str) -> str:
+    from .models import UserFollowing
+
+    user_following = UserFollowing.objects.get(id=id)
+    user_following.save()
+
+    return user_following.username

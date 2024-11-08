@@ -3,13 +3,14 @@ from typing import Self
 
 import requests
 from django.core.files.base import ContentFile
-from django.db import models
+from django.db import models, transaction
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
 from rest_framework import status
 
 from .mixins import URLToFileFieldMixin
+from .tasks import user_following_update_profil_pictures
 from .utils import (
     InstagramAPI,
     user_follower_profile_picture_upload_location,
@@ -141,34 +142,27 @@ class User(models.Model):
 
         return stories, saved_stories
 
+    @transaction.atomic
     def update_user_following(self):
         api_client = InstagramAPI()
         following = api_client.get_user_following(self.username)
 
-        # Mapping username to profile pic URL
-        following_data = {user["username"]: user.get("profile_pic_url") for user in following}
+        if following:
+            UserFollowing.objects.filter(user=self).delete()
 
-        # Get usernames already in the User table
-        following_username_list = list(following_data.keys())
-        existing_users = User.objects.filter(username__in=following_username_list).values_list("username", flat=True)
-
-        # Create new User objects for non-existing usernames
-        users_to_create = [
-            User(username=username, profile_picture_url=following_data[username])
-            for username in following_username_list
-            if username not in existing_users
+        user_following_list = [
+            UserFollowing(
+                user=self,
+                instagram_id=user.get("id"),
+                username=user.get("username"),
+                full_name=user.get("full_name"),
+                profile_picture_url=user.get("profile_pic_url"),
+                is_private_account=user.get("is_private"),
+            )
+            for user in following
         ]
-        User.objects.bulk_create(users_to_create)
-
-        # Add users to following
-        users = User.objects.filter(username__in=following_username_list)
-        self.following.set(users)
-
-        # Update profile pictures for existing users with missing profile_picture_url
-        users_without_profile_pic = users.filter(profile_picture_url__isnull=True)
-        for user in users_without_profile_pic:
-            user.profile_picture_url = following_data[user.username]
-        User.objects.bulk_update(users_without_profile_pic, ["profile_picture_url"])
+        UserFollowing.objects.bulk_create(user_following_list)
+        user_following_update_profil_pictures.delay(self.instagram_id)
 
     def save_from_url_to_file_field(self, field_name: str, file_format: str, file_url: str) -> None:
         response = requests.get(file_url, timeout=30)
