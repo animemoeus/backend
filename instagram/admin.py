@@ -1,14 +1,12 @@
 from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
 
-from .models import RoastingLog, Story, User
+from .models import RoastingLog, Story, User, UserFollower, UserFollowing
 
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     change_form_template = "instagram/admin_edit_form.html"
-
-    filter_horizontal = ["follower", "following"]
 
     search_fields = ("username",)
     list_display = (
@@ -63,6 +61,24 @@ class StoryAdmin(admin.ModelAdmin):
     readonly_fields = ["story_id", "created_at", "story_created_at"]
     search_fields = ("user", "story_id")
     ordering = ("-story_created_at",)
+
+
+@admin.register(UserFollower)
+class UserFollowerAdmin(admin.ModelAdmin):
+    list_display = ["username", "full_name", "user", "is_private_account", "created_at"]
+    readonly_fields = [
+        "profile_picture",
+        "created_at",
+    ]
+
+
+@admin.register(UserFollowing)
+class UserFollowingAdmin(admin.ModelAdmin):
+    list_display = ["username", "full_name", "user", "is_private_account", "created_at"]
+    readonly_fields = [
+        "profile_picture",
+        "created_at",
+    ]
 
 
 @admin.register(RoastingLog)

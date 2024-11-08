@@ -2,15 +2,21 @@ import uuid
 from typing import Self
 
 import requests
-from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.db import models
-from django.db.models.signals import m2m_changed, post_save
+from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
 from rest_framework import status
 
-from .utils import InstagramAPI, user_profile_picture_upload_location, user_stories_upload_location
+from .mixins import URLToFileFieldMixin
+from .utils import (
+    InstagramAPI,
+    user_follower_profile_picture_upload_location,
+    user_following_profile_picture_upload_location,
+    user_profile_picture_upload_location,
+    user_stories_upload_location,
+)
 
 
 class User(models.Model):
@@ -26,9 +32,6 @@ class User(models.Model):
     biography = models.TextField(blank=True)
     follower_count = models.PositiveIntegerField(default=0)
     following_count = models.PositiveIntegerField(default=0)
-
-    follower = models.ManyToManyField("self", symmetrical=False, blank=True, related_name="followers_set")
-    following = models.ManyToManyField("self", symmetrical=False, blank=True, related_name="following_set")
 
     updated_from_api_datetime = models.DateTimeField(verbose_name="Update from API datetime", blank=True, null=True)
 
@@ -138,6 +141,35 @@ class User(models.Model):
 
         return stories, saved_stories
 
+    def update_user_following(self):
+        api_client = InstagramAPI()
+        following = api_client.get_user_following(self.username)
+
+        # Mapping username to profile pic URL
+        following_data = {user["username"]: user.get("profile_pic_url") for user in following}
+
+        # Get usernames already in the User table
+        following_username_list = list(following_data.keys())
+        existing_users = User.objects.filter(username__in=following_username_list).values_list("username", flat=True)
+
+        # Create new User objects for non-existing usernames
+        users_to_create = [
+            User(username=username, profile_picture_url=following_data[username])
+            for username in following_username_list
+            if username not in existing_users
+        ]
+        User.objects.bulk_create(users_to_create)
+
+        # Add users to following
+        users = User.objects.filter(username__in=following_username_list)
+        self.following.set(users)
+
+        # Update profile pictures for existing users with missing profile_picture_url
+        users_without_profile_pic = users.filter(profile_picture_url__isnull=True)
+        for user in users_without_profile_pic:
+            user.profile_picture_url = following_data[user.username]
+        User.objects.bulk_update(users_without_profile_pic, ["profile_picture_url"])
+
     def save_from_url_to_file_field(self, field_name: str, file_format: str, file_url: str) -> None:
         response = requests.get(file_url, timeout=30)
 
@@ -177,6 +209,38 @@ class Story(models.Model):
             getattr(self, field_name).save(f"{uuid.uuid4()}.{file_format}", ContentFile(response.content))
 
 
+class UserFollower(models.Model, URLToFileFieldMixin):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="follower")
+
+    instagram_id = models.CharField(max_length=255, blank=True)
+    username = models.CharField(max_length=255)
+    full_name = models.CharField(max_length=255, blank=True)
+    profile_picture_url = models.URLField(max_length=1000)
+    profile_picture = models.FileField(upload_to=user_follower_profile_picture_upload_location, blank=True, null=True)
+    is_private_account = models.BooleanField(default=False)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.username}"
+
+
+class UserFollowing(models.Model, URLToFileFieldMixin):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="following")
+
+    instagram_id = models.CharField(max_length=255, blank=True)
+    username = models.CharField(max_length=255)
+    full_name = models.CharField(max_length=255, blank=True)
+    profile_picture_url = models.URLField(max_length=1000)
+    profile_picture = models.FileField(upload_to=user_following_profile_picture_upload_location, blank=True, null=True)
+    is_private_account = models.BooleanField(default=False)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.username}"
+
+
 class RoastingLog(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     username = models.CharField(max_length=255)
@@ -199,13 +263,3 @@ def story_post_save(sender, instance, **kwargs):
     if not instance.media and instance.media_url:
         media_type = instance.media_url.split("?")[0].split(".")[-1]  # Should be jpg or mp4
         instance.save_from_url_to_file_field("media", media_type, instance.media_url)
-
-
-# Prevent user from following or being followed by themselves
-@receiver(m2m_changed, sender=User.follower.through)
-@receiver(m2m_changed, sender=User.following.through)
-def prevent_self_follow(sender, instance, action, reverse, model, pk_set, **kwargs):
-    if action == "pre_add":
-        # Check if the user is trying to follow or being followed by themselves
-        if instance.uuid in pk_set:
-            raise ValidationError("A user cannot follow or be followed by themselves.")

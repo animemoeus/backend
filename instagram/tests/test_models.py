@@ -8,6 +8,7 @@ class InstagramTestCase(TestCase):
     def setUp(self):
         self.user_1 = InstagramUser.objects.create(username="arter_tendean")
         self.user_2 = InstagramUser.objects.create(username="retra_naednet")
+        self.user_3 = InstagramUser.objects.create(username="sydnaei")
         self.follower_1 = InstagramUser.objects.create(username="follower_1")
         self.following_1 = InstagramUser.objects.create(username="following_1")
 
@@ -78,6 +79,12 @@ class InstagramTestCase(TestCase):
         except Exception:
             has_error = True
         self.assertTrue(has_error)
+
+    def test_update_user_following(self):
+        InstagramUser.objects.create(username="aenjies")
+        InstagramUser.objects.create(username="angiehsl")
+        InstagramUser.objects.create(username="xtra.artx")
+        self.user_3.update_user_following()
 
 
 class TestInstagramUserStory(TestCase):
