@@ -40,6 +40,10 @@ class InstagramAPI:
 
         return response_data
 
+    def is_private_account(self, username: str) -> bool:
+        user_info = self.get_user_info_v2(username)
+        return user_info.get("is_private")
+
     @tenacity.retry(stop=tenacity.stop.stop_after_attempt(3), wait=tenacity.wait.wait_random(min=1, max=5))
     def get_user_stories(self, username: str) -> tuple[int, list]:
         url = self.base_url + "/api/v1/instagram/web_app/fetch_user_stories_by_username"
@@ -55,6 +59,84 @@ class InstagramAPI:
 
         return response.status_code, stories
 
+    def get_user_followers(self, username: str) -> list:
+        if self.is_private_account(username):
+            return []
+
+        @tenacity.retry(stop=tenacity.stop.stop_after_attempt(3), wait=tenacity.wait.wait_random(min=1, max=5))
+        def get_user_followers_with_pagination(username: str, pagination: str = "") -> tuple[list, str]:
+            url = self.base_url + "/api/v1/instagram/web_app/fetch_user_followers_by_username"
+            params = {"username": username, "pagination_token": pagination} if pagination else {"username": username}
+            response = requests.get(url, headers=self.headers, params=params, timeout=self.REQUEST_TIMEOUT)
+
+            if not response.ok:
+                return [], pagination
+
+            response_json = response.json()
+            response_data = response_json.get("data", {})
+
+            followers = response_data.get("data", {}).get("items", [])
+            pagination = response_data.get("pagination_token", "")
+
+            return followers, pagination
+
+        followers = []
+        pagination = ""
+        counter = 1
+        while True:
+            _followers, _pagination = get_user_followers_with_pagination(username, pagination)
+            followers.extend(_followers)  # Lebih optimal daripada `+=`
+            pagination = _pagination
+
+            counter += 1
+
+            if not pagination:
+                break
+
+            if counter > 5:
+                break
+
+        return followers
+
+    def get_user_following(self, username: str) -> list:
+        if self.is_private_account(username):
+            return []
+
+        @tenacity.retry(stop=tenacity.stop.stop_after_attempt(3), wait=tenacity.wait.wait_random(min=1, max=5))
+        def get_user_followers_with_pagination(username: str, pagination: str = "") -> tuple[list, str]:
+            url = self.base_url + "/api/v1/instagram/web_app/fetch_user_following_by_username"
+            params = {"username": username, "pagination_token": pagination} if pagination else {"username": username}
+            response = requests.get(url, headers=self.headers, params=params, timeout=self.REQUEST_TIMEOUT)
+
+            if not response.ok:
+                return [], pagination
+
+            response_json = response.json()
+            response_data = response_json.get("data", {})
+
+            following = response_data.get("data", {}).get("items", [])
+            pagination = response_data.get("pagination_token", "")
+
+            return following, pagination
+
+        following = []
+        pagination = ""
+        counter = 1
+        while True:
+            _following, _pagination = get_user_followers_with_pagination(username, pagination)
+            following.extend(_following)  # Lebih optimal daripada `+=`
+            pagination = _pagination
+
+            counter += 1
+
+            if not pagination:
+                break
+
+            if counter > 5:
+                break
+
+        return following
+
 
 def user_profile_picture_upload_location(instance, filename):
     return f"instagram/user/{instance.username}/profile-picture/{filename}"
@@ -62,6 +144,14 @@ def user_profile_picture_upload_location(instance, filename):
 
 def user_stories_upload_location(instance, filename):
     return f"instagram/user/{instance.user.username}/stories/{filename}"
+
+
+def user_follower_profile_picture_upload_location(instance, filename):
+    return f"instagram/user-follower/{instance.username}/profile-picture/{filename}"
+
+
+def user_following_profile_picture_upload_location(instance, filename):
+    return f"instagram/user-following/{instance.username}/profile-picture/{filename}"
 
 
 class RoastingIG:
