@@ -2,6 +2,22 @@ from celery import shared_task
 
 
 @shared_task
+def update_user_follower(instagram_id: str):
+    from .models import User as InstagramUser
+
+    user = InstagramUser.objects.get(instagram_id=instagram_id)
+    user.update_user_follower()
+
+
+@shared_task
+def update_user_following(instagram_id: str):
+    from .models import User as InstagramUser
+
+    user = InstagramUser.objects.get(instagram_id=instagram_id)
+    user.update_user_following()
+
+
+@shared_task
 def get_instagram_users_stories():
     from .models import User as InstagramUser
 
