@@ -40,20 +40,20 @@ def update_instagram_user_profile(username: str):
 
 
 @shared_task
-def user_following_update_profil_pictures(instagram_id: str) -> str:
+def user_following_update_profile_pictures(instagram_id: str) -> str:
     from .models import User as InstagramUser
     from .models import UserFollowing
 
     instagram_user = InstagramUser.objects.get(instagram_id=instagram_id)
 
     for user in UserFollowing.objects.filter(user=instagram_user):
-        user_following_update_profil_picture.delay(user.id)
+        user_following_update_profile_picture.delay(user.id)
 
     return instagram_user.username
 
 
 @shared_task
-def user_following_update_profil_picture(id: str) -> str:
+def user_following_update_profile_picture(id: str) -> str:
     from .models import UserFollowing
 
     user_following = UserFollowing.objects.get(id=id)
@@ -63,20 +63,20 @@ def user_following_update_profil_picture(id: str) -> str:
 
 
 @shared_task
-def user_follower_update_profil_pictures(instagram_id: str) -> str:
+def user_follower_update_profile_pictures(instagram_id: str) -> str:
     from .models import User as InstagramUser
     from .models import UserFollower
 
     instagram_user = InstagramUser.objects.get(instagram_id=instagram_id)
 
     for user in UserFollower.objects.filter(user=instagram_user):
-        user_follower_update_profil_picture.delay(user.id)
+        user_follower_update_profile_picture.delay(user.id)
 
     return instagram_user.username
 
 
 @shared_task
-def user_follower_update_profil_picture(id: str) -> str:
+def user_follower_update_profile_picture(id: str) -> str:
     from .models import UserFollower
 
     user_follower = UserFollower.objects.get(id=id)
