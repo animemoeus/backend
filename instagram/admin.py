@@ -2,6 +2,7 @@ from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
 
 from .models import RoastingLog, Story, User, UserFollower, UserFollowing
+from .tasks import user_follower_update_profile_pictures, user_following_update_profile_pictures
 
 
 @admin.register(User)
@@ -63,11 +64,11 @@ class UserAdmin(admin.ModelAdmin):
         self.message_user(request, f"{len(saved_stories)}/{len(stories)} stories updated")
 
     def handle_update_user_follower(self, request, obj: User):
-        obj.update_user_follower()
+        user_follower_update_profile_pictures.delay(obj.instagram_id)
         self.message_user(request, "User follower updated")
 
     def handle_update_user_following(self, request, obj: User):
-        obj.update_user_following()
+        user_following_update_profile_pictures.delay(obj.instagram_id)
         self.message_user(request, "User following updated")
 
 

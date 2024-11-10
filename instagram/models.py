@@ -10,7 +10,7 @@ from django.utils import timezone
 from rest_framework import status
 
 from .mixins import URLToFileFieldMixin
-from .tasks import user_follower_update_profil_pictures, user_following_update_profil_pictures
+from .tasks import user_follower_update_profile_pictures, user_following_update_profile_pictures
 from .utils import (
     InstagramAPI,
     user_follower_profile_picture_upload_location,
@@ -162,7 +162,7 @@ class User(models.Model):
             for user in follower
         ]
         UserFollower.objects.bulk_create(user_follower_list)
-        user_follower_update_profil_pictures.delay(self.instagram_id)
+        user_follower_update_profile_pictures.delay(self.instagram_id)
 
     @transaction.atomic
     def update_user_following(self):
@@ -184,7 +184,7 @@ class User(models.Model):
             for user in following
         ]
         UserFollowing.objects.bulk_create(user_following_list)
-        user_following_update_profil_pictures.delay(self.instagram_id)
+        user_following_update_profile_pictures.delay(self.instagram_id)
 
     def save_from_url_to_file_field(self, field_name: str, file_format: str, file_url: str) -> None:
         response = requests.get(file_url, timeout=30)
