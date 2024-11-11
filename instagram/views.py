@@ -2,14 +2,17 @@ import requests
 from django.conf import settings
 from django.core.cache import cache
 from rest_framework import filters
-from rest_framework.generics import ListAPIView
+from rest_framework.exceptions import NotFound
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import RoastingLog
 from .models import User as InstagramUser
-from .pagination import InstagramUserPagination
-from .serializers import InstagramUserSerializer
+from .models import UserFollower as InstagramUserFollower
+from .models import UserFollowing as InstagramUserFollowing
+from .pagination import InstagramUserFollowerPagination, InstagramUserFollowingPagination, InstagramUserPagination
+from .serializers import InstagramUserFollowerSerializer, InstagramUserFollowingSerializer, InstagramUserSerializer
 from .utils import InstagramAPI, RoastingIG
 
 
@@ -27,6 +30,44 @@ class InstagramUserListView(ListAPIView):
         "full_name",
     ]
     ordering = ["-created_at"]
+
+
+class InstagramUserDetailView(RetrieveAPIView):
+    serializer_class = InstagramUserSerializer
+    queryset = InstagramUser.objects.all()
+    lookup_field = "username"
+
+
+class InstagramUserFollowerListView(ListAPIView):
+    serializer_class = InstagramUserFollowerSerializer
+    pagination_class = InstagramUserFollowerPagination
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ["username"]
+    ordering = ["username"]
+
+    def get_queryset(self):
+        username = self.kwargs.get("username", None)
+        queryset = InstagramUserFollower.objects.filter(user__username=username)
+
+        if not queryset:
+            raise NotFound
+        return queryset
+
+
+class InstagramUserFollowingListView(ListAPIView):
+    serializer_class = InstagramUserFollowingSerializer
+    pagination_class = InstagramUserFollowingPagination
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ["username"]
+    ordering = ["-username"]
+
+    def get_queryset(self):
+        username = self.kwargs.get("username", None)
+        queryset = InstagramUserFollowing.objects.filter(user__username=username)
+
+        if not queryset:
+            raise NotFound
+        return queryset
 
 
 class RoastingProfileView(APIView):
