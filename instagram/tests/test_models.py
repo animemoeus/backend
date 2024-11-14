@@ -2,12 +2,16 @@ from django.test import TestCase
 
 from instagram.models import Story as InstagramStory
 from instagram.models import User as InstagramUser
+from instagram.models import UserFollowing
 
 
 class InstagramTestCase(TestCase):
     def setUp(self):
         self.user_1 = InstagramUser.objects.create(username="arter_tendean")
         self.user_2 = InstagramUser.objects.create(username="retra_naednet")
+        self.user_3 = InstagramUser.objects.create(username="sydnaei")
+        self.follower_1 = InstagramUser.objects.create(username="follower_1")
+        self.following_1 = InstagramUser.objects.create(username="following_1")
 
     def test_get_information_from_api(self):
         user_1_info = self.user_1.get_information_from_api()
@@ -52,6 +56,22 @@ class InstagramTestCase(TestCase):
         user_1_stories = self.user_1.get_user_stories()
 
         self.assertEqual(type(user_1_stories), list)
+
+    def test_update_user_following(self):
+        UserFollowing.objects.create(user=self.user_1, username="following_1")
+        UserFollowing.objects.create(user=self.user_1, username="following_2")
+        UserFollowing.objects.create(user=self.user_1, username="following_3")
+        UserFollowing.objects.create(user=self.user_2, username="following_3")
+
+        print(UserFollowing.objects.filter(user=self.user_1))
+        print(UserFollowing.objects.all())
+        UserFollowing.objects.filter(user=self.user_1).delete()
+        print(UserFollowing.objects.all())
+        self.user_1.update_user_following()
+        for i in UserFollowing.objects.filter(user=self.user_1):
+            print(i.__dict__)
+
+        # self.user_1.update_user_following()
 
 
 class TestInstagramUserStory(TestCase):
