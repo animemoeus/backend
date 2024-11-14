@@ -75,7 +75,10 @@ services:
     restart: unless-stopped
     container_name: dozzle
     image: amir20/dozzle:latest
+    command: agent
     pull_policy: always
+    ports:
+      - 7007:7007
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
