@@ -7,12 +7,12 @@ env:
 
 on:
   pull_request:
-    branches: [ "master", "main" ]
-    paths-ignore: [ "docs/**" ]
+    branches: ["master", "main"]
+    paths-ignore: ["docs/**"]
 
   push:
-    branches: [ "master", "main" ]
-    paths-ignore: [ "docs/**" ]
+    branches: ["master", "main"]
+    paths-ignore: ["docs/**"]
 
 concurrency:
   group: ${{ github.head_ref || github.run_id }}
@@ -66,8 +66,6 @@ jobs:
           echo "TIKHUB_API_URL=${{ secrets.TIKHUB_API_URL }}" >> .envs/.local/.django
           echo "TIKHUB_API_KEY=${{ secrets.TIKHUB_API_KEY }}" >> .envs/.local/.django
           cat .envs/.local/.django
-
-          cat .env
 
       - name: Build the Stack
         run: docker compose -f local.yml build
