@@ -3,13 +3,21 @@ from typing import Self
 
 import requests
 from django.core.files.base import ContentFile
-from django.db import models
+from django.db import models, transaction
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
 from rest_framework import status
 
-from .utils import InstagramAPI, user_profile_picture_upload_location, user_stories_upload_location
+from .mixins import URLToFileFieldMixin
+from .tasks import user_follower_update_profile_pictures, user_following_update_profile_pictures
+from .utils import (
+    InstagramAPI,
+    user_follower_profile_picture_upload_location,
+    user_following_profile_picture_upload_location,
+    user_profile_picture_upload_location,
+    user_stories_upload_location,
+)
 
 
 class User(models.Model):
@@ -134,6 +142,50 @@ class User(models.Model):
 
         return stories, saved_stories
 
+    @transaction.atomic
+    def update_user_follower(self):
+        api_client = InstagramAPI()
+        follower = api_client.get_user_followers(self.username)
+
+        if follower:
+            UserFollower.objects.filter(user=self).delete()
+
+        user_follower_list = [
+            UserFollower(
+                user=self,
+                instagram_id=user.get("id"),
+                username=user.get("username"),
+                full_name=user.get("full_name"),
+                profile_picture_url=user.get("profile_pic_url"),
+                is_private_account=user.get("is_private"),
+            )
+            for user in follower
+        ]
+        UserFollower.objects.bulk_create(user_follower_list)
+        user_follower_update_profile_pictures.delay(self.instagram_id)
+
+    @transaction.atomic
+    def update_user_following(self):
+        api_client = InstagramAPI()
+        following = api_client.get_user_following(self.username)
+
+        if following:
+            UserFollowing.objects.filter(user=self).delete()
+
+        user_following_list = [
+            UserFollowing(
+                user=self,
+                instagram_id=user.get("id"),
+                username=user.get("username"),
+                full_name=user.get("full_name"),
+                profile_picture_url=user.get("profile_pic_url"),
+                is_private_account=user.get("is_private"),
+            )
+            for user in following
+        ]
+        UserFollowing.objects.bulk_create(user_following_list)
+        user_following_update_profile_pictures.delay(self.instagram_id)
+
     def save_from_url_to_file_field(self, field_name: str, file_format: str, file_url: str) -> None:
         response = requests.get(file_url, timeout=30)
 
@@ -171,6 +223,38 @@ class Story(models.Model):
 
         if hasattr(self, field_name):
             getattr(self, field_name).save(f"{uuid.uuid4()}.{file_format}", ContentFile(response.content))
+
+
+class UserFollower(models.Model, URLToFileFieldMixin):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="follower")
+
+    instagram_id = models.CharField(max_length=255, blank=True)
+    username = models.CharField(max_length=255)
+    full_name = models.CharField(max_length=255, blank=True)
+    profile_picture_url = models.URLField(max_length=1000)
+    profile_picture = models.FileField(upload_to=user_follower_profile_picture_upload_location, blank=True, null=True)
+    is_private_account = models.BooleanField(default=False)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.username}"
+
+
+class UserFollowing(models.Model, URLToFileFieldMixin):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="following")
+
+    instagram_id = models.CharField(max_length=255, blank=True)
+    username = models.CharField(max_length=255)
+    full_name = models.CharField(max_length=255, blank=True)
+    profile_picture_url = models.URLField(max_length=1000)
+    profile_picture = models.FileField(upload_to=user_following_profile_picture_upload_location, blank=True, null=True)
+    is_private_account = models.BooleanField(default=False)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.username}"
 
 
 class RoastingLog(models.Model):

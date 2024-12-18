@@ -20,6 +20,18 @@ class TestInstagramAPI(TestCase):
         status_code, stories = self.instagram_api.get_user_stories(self.test_user_1)
         self.assertIsNotNone(stories, "Should return user stories")
 
+    def test_get_account_privacy(self):
+        is_private_account = self.instagram_api.is_private_account("xtra.artx")
+        self.assertEqual(is_private_account, True)
+
+    def test_get_user_followers(self):
+        followers = self.instagram_api.get_user_followers("xtra.artx")
+        self.assertEqual(type(followers), list)
+
+    def test_get_user_following(self):
+        following = self.instagram_api.get_user_following("xtra.artx")
+        self.assertEqual(type(following), list)
+
 
 class TestGetInstagramRoastingText(TestCase):
     def setUp(self):

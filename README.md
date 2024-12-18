@@ -1,7 +1,7 @@
 # AnimeMoeUs Backend
 
 [![Built with Cookiecutter Django](https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg?logo=cookiecutter)](https://github.com/cookiecutter/cookiecutter-django/)
-[![codecov](https://codecov.io/gh/animemoeus/backend/graph/badge.svg?token=8UHQY5ZZSE)](https://codecov.io/gh/animemoeus/backend)
+[![codecov](https://codecov.io/gh/animemoeus/mono-backend/branch/master/graph/badge.svg?token=8UHQY5ZZSE)](https://codecov.io/gh/animemoeus/mono-backend)
 [![Black code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 [![Deployment](https://github.com/animemoeus/backend/actions/workflows/deployment.yml/badge.svg)](https://github.com/animemoeus/backend/actions/workflows/deployment.yml)
 [![Uptime Robot status](https://img.shields.io/uptimerobot/status/m788586431-1256ae08e9b37721503fdef8)](https://stats.uptimerobot.com/GKy6liBGw7/788586431)
@@ -14,8 +14,7 @@
 - [🧑‍⚕️ Health Check](https://api.animemoe.us/health-check/)
 - [👀 Admin Panel](https://api.animemoe.us/admin/)
 - [🌸 Django Flower](https://flower.animemoe.us/)
-- [🐉 Wireguard](https://wireguard.animemoe.us/)
-- [📊 Docker Logs](https://dozzle.animemoe.us/)
+- [📊 Docker Logs](https://dozzle.unklab.id/)
 
 ---
 
